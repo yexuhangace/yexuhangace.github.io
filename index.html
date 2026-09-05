@@ -172,25 +172,10 @@ section { padding: 6rem 0 1rem; }
 }
 .avatar-card:hover { transform: rotate(0deg) translate(-4px,-4px); box-shadow: var(--shadow-lg); }
 .avatar-card .m-label { display: block; text-align: center; font-size: 0.85rem; font-weight: 800; margin-top: 8px; letter-spacing: 1px; }
-.avatar-drop {
-  position: relative; height: 220px; border: 3px dashed var(--ink); border-radius: 14px;
-  background: var(--bg-soft); display: flex; align-items: center; justify-content: center;
-  overflow: hidden; cursor: pointer; transition: background 0.2s;
-}
-.avatar-drop:hover, .avatar-drop.drag { background: var(--yellow); }
-.avatar-empty { text-align: center; pointer-events: none; padding: 0 12px; }
-.avatar-ico { font-size: 2.6rem; line-height: 1; }
-.avatar-txt { font-weight: 900; font-size: 1.05rem; margin-top: 8px; letter-spacing: 1px; }
-.avatar-sub { font-size: 0.75rem; color: var(--ink-3); font-weight: 600; margin-top: 4px; }
-.avatar-preview { position: absolute; inset: 0; }
-.avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
-.avatar-status {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
-  font-size: 0.8rem; font-weight: 800; text-align: center; padding: 6px 8px;
-  background: var(--ink); color: #fff; opacity: 0; transition: opacity 0.2s; pointer-events: none;
-}
-.avatar-status.show { opacity: 1; }
-.avatar-status.err { background: var(--red); }
+.avatar-fig { margin: 0; height: 220px; overflow: hidden; border-radius: 12px; cursor: pointer; position: relative; }
+.avatar-fig img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s var(--ease); }
+.avatar-fig:hover img { transform: scale(1.05); }
+.avatar-fig.drag { outline: 4px dashed var(--ink); outline-offset: -8px; }
 .scroll-hint {
   position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 2;
   font-size: 0.75rem; font-weight: 700; letter-spacing: 4px; color: rgba(255,255,255,0.85);
@@ -503,6 +488,14 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
 }
 .rep-qr:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 0 var(--ink); }
 .rep-note { display: block; font-size: 0.72rem; color: var(--ink-3); margin-top: 10px; }
+.meta-input {
+  width: 100%; border: 3px solid var(--ink); border-radius: 12px;
+  padding: 12px 14px; font-size: 0.95rem; font-weight: 700;
+  font-family: inherit; outline: none; background: var(--bg-soft);
+}
+.meta-input:focus { background: #fff; box-shadow: var(--shadow-sm); }
+.hero-meta.editable { cursor: pointer; }
+.hero-meta.editable:hover { text-decoration: underline dashed rgba(255,255,255,.75); text-underline-offset: 6px; }
 
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); transition-delay: var(--d, 0s); }
 .reveal.active { opacity: 1; transform: translateY(0); }
@@ -675,18 +668,11 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
   </div>
 
   <div class="avatar-card card reveal" id="avatarCard">
-    <div class="avatar-drop" id="avatarDrop" title="点击或拖拽上传头像（需密码）">
-      <div class="avatar-empty" id="avatarEmpty">
-        <div class="avatar-ico">📷</div>
-        <div class="avatar-txt">上传头像</div>
-        <div class="avatar-sub">点击选择 · 或拖拽图片到此处</div>
-      </div>
-      <div class="avatar-preview" id="avatarPreview" hidden><img id="avatarImg" alt="我的头像"></div>
-      <div class="avatar-status" id="avatarStatus"></div>
-    </div>
-    <span class="m-label">个人头像 · 点击更换</span>
+    <figure class="avatar-fig" data-lb data-avatar>
+      <img id="avatarImg" src="assets/brand/brand_ip_turnaround.png" alt="个人头像" data-cap="个人头像 · 点击左下角「替换照片」可更换（需密码）">
+    </figure>
+    <span class="m-label">个人头像</span>
   </div>
-  <input type="file" id="avatarInput" hidden accept="image/*">
 
   <div class="scroll-hint">SCROLL ↓</div>
 </header>
@@ -1185,6 +1171,18 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
     <span class="rep-note">替换仅保存在当前浏览器 · 点击二维码可更换（需密码）</span>
   </div>
 </div>
+<!-- 编辑一句话弹窗（Hero 求职意向行） -->
+<div class="overlay" id="metaMenu">
+  <div class="modal-card">
+    <h3>✏️ 编辑这句话</h3>
+    <p>自定义 Hero 底部展示的一行话 · 仅保存在本浏览器</p>
+    <input class="meta-input" id="metaInput" maxlength="60" placeholder="输入你想展示的话" autocomplete="off">
+    <div class="modal-actions">
+      <button class="btn-no" id="metaCancel">取消</button>
+      <button class="btn-ok" id="metaSave">保存</button>
+    </div>
+  </div>
+</div>
 <input type="file" id="repInput" hidden accept="image/*">
 <input type="file" id="qrInput" hidden accept="image/*">
 
@@ -1326,7 +1324,7 @@ function imgSlotFallback(img, filename) {
   document.addEventListener('click', e => {
     const fig = e.target.closest('[data-lb]');
     if (!fig) return;
-    const scope = fig.closest('.ph-cat') || document;
+    const scope = fig.closest('.ph-cat') || (fig.dataset.avatar !== undefined ? fig : document);
     lbList = [...scope.querySelectorAll('[data-lb] img')].filter(im => im.offsetParent !== null || !im.closest('.collapsible'));
     if (!lbList.includes(fig.querySelector('img'))) lbList = [...scope.querySelectorAll('[data-lb] img')];
     show(lbList.indexOf(fig.querySelector('img')));
@@ -1445,53 +1443,36 @@ function imgSlotFallback(img, filename) {
     });
   });
 
-  /* ---------- 头像上传（点击 + 拖拽 · 密码保护） ---------- */
-  const avatarDrop = document.getElementById('avatarDrop');
-  const avatarInput = document.getElementById('avatarInput');
-  const avatarPreview = document.getElementById('avatarPreview');
+  /* ---------- 头像（平时展示头像图 · 点击放大 · 灯箱左下角替换 · 支持拖拽换图） ---------- */
   const avatarImg = document.getElementById('avatarImg');
-  const avatarEmpty = document.getElementById('avatarEmpty');
-  const avatarStatus = document.getElementById('avatarStatus');
-  function applyAvatar(data) {
-    avatarImg.src = data;
-    avatarPreview.hidden = false;
-    avatarEmpty.style.display = 'none';
-  }
-  let avatarTimer = null;
-  function avatarMsg(msg, err) {
-    avatarStatus.textContent = msg;
-    avatarStatus.classList.toggle('err', !!err);
-    avatarStatus.classList.add('show');
-    clearTimeout(avatarTimer);
-    avatarTimer = setTimeout(() => avatarStatus.classList.remove('show'), 2600);
-  }
+  const avatarFig = avatarImg.closest('[data-lb]');
+  const DEFAULT_AVATAR = 'assets/brand/brand_ip_turnaround.png';
+  function applyAvatar(data) { avatarImg.src = data; }
   async function saveAvatar(data) {
     const rows = await idbAll();
     for (const r of rows) { if (r.section === 'avatar') await idbDel(r.id); }
     await idbAdd({ section: 'avatar', data, cap: 'avatar' });
     applyAvatar(data);
   }
-  async function handleAvatar(f) {
-    avatarMsg('⏳ 正在上传…');
-    try {
-      const data = await fileToDataURL(f);
-      await saveAvatar(data);
-      avatarMsg('✓ 头像已更新');
-    } catch (err) { avatarMsg('✗ 上传失败，请重试', true); }
+  async function resetAvatar() {
+    const rows = await idbAll();
+    for (const r of rows) { if (r.section === 'avatar') await idbDel(r.id); }
+    applyAvatar(DEFAULT_AVATAR);
+    lbImg.src = DEFAULT_AVATAR;
+    showToast('✓ 已恢复默认头像');
   }
-  avatarDrop.addEventListener('click', () => requestAuth(() => avatarInput.click()));
-  avatarInput.addEventListener('change', () => {
-    const f = avatarInput.files[0];
-    if (f) handleAvatar(f);
-    avatarInput.value = '';
-  });
-  ['dragenter', 'dragover'].forEach(ev => avatarDrop.addEventListener(ev, e => { e.preventDefault(); avatarDrop.classList.add('drag'); }));
-  ['dragleave', 'drop'].forEach(ev => avatarDrop.addEventListener(ev, e => { e.preventDefault(); avatarDrop.classList.remove('drag'); }));
-  avatarDrop.addEventListener('drop', e => {
+  /* 拖拽图片到头像即可更换（需密码） */
+  ['dragenter', 'dragover'].forEach(ev => avatarFig.addEventListener(ev, e => { e.preventDefault(); avatarFig.classList.add('drag'); }));
+  ['dragleave', 'drop'].forEach(ev => avatarFig.addEventListener(ev, e => { e.preventDefault(); avatarFig.classList.remove('drag'); }));
+  avatarFig.addEventListener('drop', e => {
     const f = e.dataTransfer.files && e.dataTransfer.files[0];
     if (!f) return;
-    if (!f.type.startsWith('image/')) { avatarMsg('✗ 请拖入图片文件', true); return; }
-    requestAuth(() => handleAvatar(f));
+    if (!f.type.startsWith('image/')) { showToast('✗ 请拖入图片文件'); return; }
+    requestAuth(async () => {
+      showToast('⏳ 正在上传…');
+      try { await saveAvatar(await fileToDataURL(f)); showToast('✓ 头像已更新'); }
+      catch (err) { showToast('✗ 上传失败，请重试'); }
+    });
   });
 
   /* 启动：恢复已上传作品 / 头像 / 图片替换覆盖 */
@@ -1499,6 +1480,7 @@ function imgSlotFallback(img, filename) {
     (rows || []).forEach(r => {
       if (r.section === 'hero-bg') applyHeroBg(r.data);
       else if (r.section === 'avatar') applyAvatar(r.data);
+      else if (r.section === META_KEY) heroMeta.textContent = r.data;
       else addUploadCard(r.section, r.data, r.cap, r.id, false);
     });
     (ovs || []).forEach(o => {
@@ -1637,7 +1619,10 @@ function imgSlotFallback(img, filename) {
     try {
       const data = await fileToDataURL(f);
       const fig = img.closest('[data-lb]');
-      if (fig && fig.dataset.uid) {
+      if (fig && fig.dataset.avatar !== undefined) {
+        /* 头像：更新头像记录 */
+        await saveAvatar(data);
+      } else if (fig && fig.dataset.uid) {
         /* 本地上传的作品：直接更新记录 */
         await idbPut({ id: Number(fig.dataset.uid), section: fig.dataset.section || 'brand', data, cap: img.dataset.cap || img.alt || '上传作品' });
       } else {
@@ -1652,11 +1637,16 @@ function imgSlotFallback(img, filename) {
       showToast('✓ 照片已替换');
     } catch (err) { showToast('✗ 替换失败，请重试'); }
   }
-  /* 恢复原图（仅静态图片可恢复） */
+  /* 恢复原图（头像恢复默认；静态图片恢复初始文件） */
   document.getElementById('repReset').addEventListener('click', async () => {
     const img = lbList[lbIdx];
     if (!img) return;
     const fig = img.closest('[data-lb]');
+    if (fig && fig.dataset.avatar !== undefined) {
+      await resetAvatar();
+      repMenu.classList.remove('show');
+      return;
+    }
     if (fig && fig.dataset.uid) { repMenu.classList.remove('show'); return; }
     const key = img.dataset.origSrc;
     if (key) {
@@ -1689,6 +1679,37 @@ function imgSlotFallback(img, filename) {
       showToast('✓ 二维码已更新');
     } catch (err) { showToast('✗ 更新失败，请重试'); }
     qrInput.value = '';
+  });
+
+  /* ---------- Hero 一句话编辑（点击 → 密码 → 自定义内容） ---------- */
+  const metaMenu = document.getElementById('metaMenu');
+  const metaInput = document.getElementById('metaInput');
+  const heroMeta = document.querySelector('.hero-meta');
+  const META_KEY = 'hero-meta';
+  heroMeta.classList.add('editable');
+  heroMeta.title = '点击编辑这句话（需密码）';
+  heroMeta.addEventListener('click', () => requestAuth(() => {
+    metaInput.value = heroMeta.textContent.trim();
+    metaMenu.classList.add('show');
+    setTimeout(() => metaInput.focus(), 60);
+  }));
+  document.getElementById('metaCancel').addEventListener('click', () => metaMenu.classList.remove('show'));
+  metaMenu.addEventListener('click', e => { if (e.target === metaMenu) metaMenu.classList.remove('show'); });
+  async function saveMeta(v) {
+    heroMeta.textContent = v;
+    const rows = await idbAll();
+    for (const r of rows) { if (r.section === META_KEY) await idbDel(r.id); }
+    await idbAdd({ section: META_KEY, data: v, cap: META_KEY });
+    metaMenu.classList.remove('show');
+    showToast('✓ 已保存');
+  }
+  document.getElementById('metaSave').addEventListener('click', () => {
+    const v = metaInput.value.trim();
+    if (!v) { showToast('✗ 内容不能为空'); return; }
+    saveMeta(v);
+  });
+  metaInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('metaSave').click();
   });
 
   /* ---------- 回到顶部 ---------- */
