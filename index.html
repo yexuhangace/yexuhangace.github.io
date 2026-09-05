@@ -6,9 +6,7 @@
 <meta name="description" content="叶栩航 — 视觉设计师 · 广告学。用创意解构需求，用设计传递温度。">
 <title>叶栩航 · 视觉设计师 | 用创意解构需求，用设计传递温度</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B0B0B'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%23FFC224' font-family='sans-serif' font-weight='800'%3E叶%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- 字体使用系统字体栈（PingFang SC / Microsoft YaHei 兜底），不加载外部字体，避免国内访问被 Google Fonts 阻塞渲染 -->
 <style>
 /* ============================================================
    Neobrutalism × Landscape Hero
@@ -33,7 +31,7 @@
   --orange: #FDB927;
   --ease: cubic-bezier(0.2, 0, 0, 1);
   --nav-h: 72px;
-  --font: 'Onest', -apple-system, 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  --font: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -783,7 +781,7 @@ body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both
         <figcaption><b>IP 表情包</b><span>Stickers</span></figcaption>
       </figure>
       <figure class="card reveal" data-lb>
-        <figure><img src="assets/brand/brand_mug.png" alt="马克杯样机" loading="lazy" data-cap="马克杯样机"></figure>
+        <figure><img src="assets/brand/brand_mug.jpg" alt="马克杯样机" loading="lazy" data-cap="马克杯样机"></figure>
         <figcaption><b>马克杯样机</b><span>Mug Mockup</span></figcaption>
       </figure>
       <figure class="card reveal" data-lb>
@@ -874,7 +872,7 @@ body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both
         </div>
       </div>
       <div class="ph-cover card" data-toggle="grid-product">
-        <img src="assets/photography/product/product_1.jpg" alt="产品摄影封面" data-cap="产品摄影 · 封面">
+        <img src="assets/photography/product/product_1.jpg" alt="产品摄影封面" loading="lazy" data-cap="产品摄影 · 封面">
         <div class="cover-label">
           <div><b>产品摄影</b><small>PRODUCT · 商业质感与光影</small></div>
           <span>展开全部 →</span>
@@ -893,7 +891,7 @@ body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both
         </div>
       </div>
       <div class="ph-cover card" data-toggle="grid-street">
-        <img src="assets/photography/street/street_1.jpg" alt="城市烟火封面" data-cap="城市烟火 · 封面">
+        <img src="assets/photography/street/street_1.jpg" alt="城市烟火封面" loading="lazy" data-cap="城市烟火 · 封面">
         <div class="cover-label">
           <div><b>城市烟火</b><small>STREET · 街头与人间烟火</small></div>
           <span>展开全部 →</span>
@@ -919,7 +917,7 @@ body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both
         </div>
       </div>
       <div class="ph-cover card" data-toggle="grid-blue">
-        <img src="assets/photography/blue/blue_1.jpg" alt="蓝调封面" data-cap="蓝调 · 封面">
+        <img src="assets/photography/blue/blue_1.jpg" alt="蓝调封面" loading="lazy" data-cap="蓝调 · 封面">
         <div class="cover-label">
           <div><b>蓝调</b><small>BLUE · 静谧蓝调时刻</small></div>
           <span>展开全部 →</span>
@@ -945,7 +943,7 @@ body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both
         </div>
       </div>
       <div class="ph-cover card" data-toggle="grid-land">
-        <img src="assets/photography/landscape/land_1.jpg" alt="风景封面" data-cap="风景 · 封面">
+        <img src="assets/photography/landscape/land_1.jpg" alt="风景封面" loading="lazy" data-cap="风景 · 封面">
         <div class="cover-label">
           <div><b>风景</b><small>LANDSCAPE · 山川与旷野</small></div>
           <span>展开全部 →</span>
@@ -974,7 +972,7 @@ body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both
     </div>
     <div class="video-grid reveal-group">
       <div class="card video-card reveal">
-        <video controls preload="metadata" playsinline src="assets/video/video_yili_ai.mp4"></video>
+        <video controls preload="none" playsinline src="assets/video/video_yili_ai.mp4"></video>
         <div class="video-meta"><h3>AI 广告作品 · 伊利</h3><p>参与制作 · AIGC 视频广告创作</p></div>
       </div>
       <div class="card video-card reveal">
