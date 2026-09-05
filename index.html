@@ -164,18 +164,6 @@ section { padding: 6rem 0 1rem; }
 }
 .btn-hero-ghost:hover { background: #fff; color: var(--ink); }
 .hero-meta { margin-top: 24px; color: rgba(255,255,255,0.78); font-size: 0.92rem; font-weight: 600; letter-spacing: 0.5px; text-shadow: 0 2px 10px rgba(0,0,0,.4); }
-.avatar-card {
-  position: fixed; right: 6%; bottom: 140px; width: 270px; z-index: 2;
-  transform: rotate(3deg); background: #fff; padding: 14px 14px 12px;
-  border: 3px solid var(--ink); border-radius: 20px; box-shadow: var(--shadow);
-  transition: transform 0.25s var(--ease);
-}
-.avatar-card:hover { transform: rotate(0deg) translate(-4px,-4px); box-shadow: var(--shadow-lg); }
-.avatar-card .m-label { display: block; text-align: center; font-size: 0.85rem; font-weight: 800; margin-top: 8px; letter-spacing: 1px; }
-.avatar-fig { margin: 0; height: 220px; overflow: hidden; border-radius: 12px; cursor: pointer; position: relative; }
-.avatar-fig img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s var(--ease); }
-.avatar-fig:hover img { transform: scale(1.05); }
-.avatar-fig.drag { outline: 4px dashed var(--ink); outline-offset: -8px; }
 .scroll-hint {
   position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 2;
   font-size: 0.75rem; font-weight: 700; letter-spacing: 4px; color: rgba(255,255,255,0.85);
@@ -333,7 +321,10 @@ section { padding: 6rem 0 1rem; }
   font-size: 0.75rem; font-weight: 800; padding: 5px 12px;
   border: 2.5px dashed var(--ink); border-radius: 10px; background: var(--bg-soft);
   transition: all 0.2s;
+  /* 作者模式：默认对访客隐藏上传入口 */
+  display: none;
 }
+body.author-mode .upload-btn { display: inline-flex; animation: fadeUp 0.4s var(--ease) both; }
 .upload-btn:hover { background: var(--yellow); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 0 var(--ink); }
 .up-item { position: relative; }
 .up-item img { width: 100%; height: 100%; object-fit: cover; }
@@ -479,7 +470,10 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
   padding: 10px 18px; border: 3px solid var(--ink); border-radius: 12px;
   background: var(--bg); color: var(--ink); cursor: pointer;
   box-shadow: var(--shadow-sm); transition: 0.2s;
+  /* 作者模式：默认对访客隐藏 */
+  display: none;
 }
+body.author-mode .lb-replace { display: inline-block; animation: fadeUp 0.4s var(--ease) both; }
 .lb-replace:hover { background: var(--yellow); transform: translate(-2px,-2px); box-shadow: 4px 4px 0 0 var(--ink); }
 .rep-qr {
   width: 150px; height: 150px; object-fit: cover; display: block;
@@ -513,9 +507,11 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
   width: 46px; height: 46px; border-radius: 50%;
   background: var(--yellow); border: 3px solid var(--ink);
   box-shadow: var(--shadow-sm); font-size: 1.15rem;
-  display: flex; align-items: center; justify-content: center;
+  display: none; align-items: center; justify-content: center;
   transition: transform 0.2s, box-shadow 0.2s;
+  /* 作者模式：默认对访客隐藏 */
 }
+body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both; }
 #bgDot:hover { transform: translate(-2px,-2px) rotate(-8deg); box-shadow: 6px 6px 0 0 var(--ink); }
 .overlay {
   position: fixed; inset: 0; z-index: 4500;
@@ -588,7 +584,6 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
   .about-grid { grid-template-columns: 1fr; }
   .deck-card { grid-template-columns: 1fr; }
   .deck-frame { border-left: none; border-top: 3px solid var(--ink); border-radius: 0 0 var(--radius) var(--radius); }
-  .avatar-card { display: none; }
 }
 @media (max-width: 768px) {
   .nav-links {
@@ -665,13 +660,6 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
       <a href="#contact" class="btn-hero-ghost">联系我</a>
     </div>
     <div class="hero-meta reveal">求职意向 · 产品实习生 ｜ 坐标 · 广东东莞 ｜ PS · CDR · PR · AIGC</div>
-  </div>
-
-  <div class="avatar-card card reveal" id="avatarCard">
-    <figure class="avatar-fig" data-lb data-avatar>
-      <img id="avatarImg" src="assets/brand/brand_ip_turnaround.png" alt="个人头像" data-cap="个人头像 · 点击左下角「替换照片」可更换（需密码）">
-    </figure>
-    <span class="m-label">个人头像</span>
   </div>
 
   <div class="scroll-hint">SCROLL ↓</div>
@@ -1106,7 +1094,6 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
         </div>
         <h3>微信</h3>
         <span class="val">mikapikasaki</span>
-        <span class="qr-tip">悬停显示二维码 · 点击可更换（需密码）</span>
         <div class="qr-pop"><img src="assets/wechat_qr.png" alt="微信二维码" loading="lazy"></div>
       </div>
     </div>
@@ -1130,8 +1117,8 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
 <!-- 密码验证弹窗 -->
 <div class="overlay" id="authOverlay">
   <div class="modal-card" id="authCard">
-    <h3>🔐 身份验证</h3>
-    <p>上传作品需要验证身份 · 密码由站主保管<br>验证通过后本次浏览期间可直接上传</p>
+    <h3>🔐 作者验证</h3>
+    <p>上传与替换功能仅对站主开放 · 请输入站主密码<br>验证通过后本次浏览期间将保持「作者模式」</p>
     <div class="auth-wrap">
       <input class="auth-input" id="authInput" type="password" inputmode="numeric" placeholder="••••••••" maxlength="8" autocomplete="off">
       <button type="button" class="auth-eye" id="authEye" title="显示/隐藏密码" aria-label="显示或隐藏密码">👁</button>
@@ -1324,7 +1311,7 @@ function imgSlotFallback(img, filename) {
   document.addEventListener('click', e => {
     const fig = e.target.closest('[data-lb]');
     if (!fig) return;
-    const scope = fig.closest('.ph-cat') || (fig.dataset.avatar !== undefined ? fig : document);
+    const scope = fig.closest('.ph-cat') || document;
     lbList = [...scope.querySelectorAll('[data-lb] img')].filter(im => im.offsetParent !== null || !im.closest('.collapsible'));
     if (!lbList.includes(fig.querySelector('img'))) lbList = [...scope.querySelectorAll('[data-lb] img')];
     show(lbList.indexOf(fig.querySelector('img')));
@@ -1437,49 +1424,20 @@ function imgSlotFallback(img, filename) {
           addUploadCard(section, data, f.name, id, true);
           const grid = GRID_MAP[section];
           if (grid && grid.classList.contains('collapsible')) grid.classList.add('open');
-        } catch (err) { console.warn('上传失败:', f.name, err); }
+          logOp('作品上传', section, '成功', f.name);
+        } catch (err) {
+          console.warn('上传失败:', f.name, err);
+          logOp('作品上传', section, '失败', f.name);
+        }
       }
       input.value = '';
     });
   });
 
-  /* ---------- 头像（平时展示头像图 · 点击放大 · 灯箱左下角替换 · 支持拖拽换图） ---------- */
-  const avatarImg = document.getElementById('avatarImg');
-  const avatarFig = avatarImg.closest('[data-lb]');
-  const DEFAULT_AVATAR = 'assets/brand/brand_ip_turnaround.png';
-  function applyAvatar(data) { avatarImg.src = data; }
-  async function saveAvatar(data) {
-    const rows = await idbAll();
-    for (const r of rows) { if (r.section === 'avatar') await idbDel(r.id); }
-    await idbAdd({ section: 'avatar', data, cap: 'avatar' });
-    applyAvatar(data);
-  }
-  async function resetAvatar() {
-    const rows = await idbAll();
-    for (const r of rows) { if (r.section === 'avatar') await idbDel(r.id); }
-    applyAvatar(DEFAULT_AVATAR);
-    lbImg.src = DEFAULT_AVATAR;
-    showToast('✓ 已恢复默认头像');
-  }
-  /* 拖拽图片到头像即可更换（需密码） */
-  ['dragenter', 'dragover'].forEach(ev => avatarFig.addEventListener(ev, e => { e.preventDefault(); avatarFig.classList.add('drag'); }));
-  ['dragleave', 'drop'].forEach(ev => avatarFig.addEventListener(ev, e => { e.preventDefault(); avatarFig.classList.remove('drag'); }));
-  avatarFig.addEventListener('drop', e => {
-    const f = e.dataTransfer.files && e.dataTransfer.files[0];
-    if (!f) return;
-    if (!f.type.startsWith('image/')) { showToast('✗ 请拖入图片文件'); return; }
-    requestAuth(async () => {
-      showToast('⏳ 正在上传…');
-      try { await saveAvatar(await fileToDataURL(f)); showToast('✓ 头像已更新'); }
-      catch (err) { showToast('✗ 上传失败，请重试'); }
-    });
-  });
-
-  /* 启动：恢复已上传作品 / 头像 / 图片替换覆盖 */
+  /* 启动：恢复已上传作品 / 背景图 / 一句话 / 图片替换覆盖 */
   Promise.all([idbAll().catch(() => []), ovrAll().catch(() => [])]).then(([rows, ovs]) => {
     (rows || []).forEach(r => {
       if (r.section === 'hero-bg') applyHeroBg(r.data);
-      else if (r.section === 'avatar') applyAvatar(r.data);
       else if (r.section === META_KEY) heroMeta.textContent = r.data;
       else addUploadCard(r.section, r.data, r.cap, r.id, false);
     });
@@ -1493,13 +1451,37 @@ function imgSlotFallback(img, filename) {
   /* 初始化分类计数 */
   document.querySelectorAll('.ph-cat').forEach(updateCount);
 
-  /* ---------- 密码验证（统一 20041223） ---------- */
+  /* ---------- 操作日志（本机记录 · 操作人/时间/模块/结果） ---------- */
+  const LOG_KEY = 'yxh_op_logs';
+  function logOp(module, action, result, detail) {
+    try {
+      const logs = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+      logs.push({
+        time: new Date().toLocaleString('zh-CN', { hour12: false }),
+        operator: '站主(本机)',
+        module: module, action: action, result: result,
+        detail: detail || ''
+      });
+      while (logs.length > 200) logs.shift();
+      localStorage.setItem(LOG_KEY, JSON.stringify(logs));
+    } catch (e) { /* 日志失败不影响主流程 */ }
+  }
+  /* 控制台查看：yxhLogs() · 清空：yxhClearLogs() */
+  window.yxhLogs = () => { try { return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch (e) { return []; } };
+  window.yxhClearLogs = () => { localStorage.removeItem(LOG_KEY); console.log('✓ 操作日志已清空'); };
+
+  /* ---------- 密码验证（作者模式 · SHA-256 哈希比对，不存明文） ---------- */
   const authOverlay = document.getElementById('authOverlay');
   const authInput = document.getElementById('authInput');
   const authError = document.getElementById('authError');
   const authCard = document.getElementById('authCard');
-  const PASSCODE = '20041223';
+  /* 存储的是密码的 SHA-256 哈希值 */
+  const PASSCODE_HASH = 'b2cf196d98c628cfec62bd139b1789b92cb084e54bd6101b426427ca12e99dd8';
+  const MAX_TRIES = 5;                /* 允许的连续错误次数 */
+  const LOCK_MS = 10 * 60 * 1000;     /* 防暴力锁定时长：10 分钟 */
   let authCb = null;
+  let errorCount = Number(localStorage.getItem('yxh_auth_err') || 0);
+  let lockUntil = Number(localStorage.getItem('yxh_auth_lock') || 0);
 
   const toast = document.getElementById('toast');
   let toastTimer = null;
@@ -1510,7 +1492,69 @@ function imgSlotFallback(img, filename) {
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
   }
 
+  /* 纯 JS SHA-256（同步实现 · 无外部依赖） */
+  function sha256Hex(str) {
+    function rr(v, a) { return (v >>> a) | (v << (32 - a)); }
+    const maxWord = Math.pow(2, 32);
+    let result = '';
+    const words = [], bitLen = str.length * 8;
+    const hash = [], k = [];
+    let pc = 0;
+    const composite = {};
+    for (let cand = 2; pc < 64; cand++) {
+      if (!composite[cand]) {
+        for (let i = 0; i < 313; i += cand) composite[i] = cand;
+        hash[pc] = (Math.pow(cand, 0.5) * maxWord) | 0;
+        k[pc++] = (Math.pow(cand, 1 / 3) * maxWord) | 0;
+      }
+    }
+    str += '\x80';
+    while (str.length % 64 - 56) str += '\x00';
+    for (let i = 0; i < str.length; i++) {
+      const j = str.charCodeAt(i);
+      if (j >> 8) return '';
+      words[i >> 2] |= j << ((3 - i) % 4) * 8;
+    }
+    words[words.length] = (bitLen / maxWord) | 0;
+    words[words.length] = bitLen;
+    for (let j = 0; j < words.length;) {
+      const w = words.slice(j, j += 16);
+      for (let i = 16; i < 64; i++) {
+        const w15 = w[i - 15], w2 = w[i - 2];
+        const s0 = rr(w15, 7) ^ rr(w15, 18) ^ (w15 >>> 3);
+        const s1 = rr(w2, 17) ^ rr(w2, 19) ^ (w2 >>> 10);
+        w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;
+      }
+      let a = hash[0], b = hash[1], c = hash[2], d = hash[3], e = hash[4], f = hash[5], g = hash[6], h = hash[7];
+      for (let i = 0; i < 64; i++) {
+        const S1 = rr(e, 6) ^ rr(e, 11) ^ rr(e, 25);
+        const ch = (e & f) ^ (~e & g);
+        const t1 = (h + S1 + ch + k[i] + w[i]) | 0;
+        const S0 = rr(a, 2) ^ rr(a, 13) ^ rr(a, 22);
+        const mj = (a & b) ^ (a & c) ^ (b & c);
+        const t2 = (S0 + mj) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      hash[0] = (hash[0] + a) | 0; hash[1] = (hash[1] + b) | 0;
+      hash[2] = (hash[2] + c) | 0; hash[3] = (hash[3] + d) | 0;
+      hash[4] = (hash[4] + e) | 0; hash[5] = (hash[5] + f) | 0;
+      hash[6] = (hash[6] + g) | 0; hash[7] = (hash[7] + h) | 0;
+    }
+    for (let i = 0; i < 8; i++) for (let j = 3; j + 1; j--) {
+      const b = (hash[i] >> (j * 8)) & 255;
+      result += (b < 16 ? '0' : '') + b.toString(16);
+    }
+    return result;
+  }
+
+  function lockRemaining() { return Math.max(0, lockUntil - Date.now()); }
+
+  /* 作者模式：开启后显示全部上传/管理入口（过渡动画由 CSS 处理） */
+  function enterAuthorMode() { document.body.classList.add('author-mode'); }
+
   function requestAuth(cb) {
+    const rem = lockRemaining();
+    if (rem > 0) { showToast(`✗ 尝试次数过多，已锁定，请 ${Math.ceil(rem / 1000)} 秒后再试`); return; }
     if (sessionStorage.getItem('yxh_auth') === '1') { cb(); return; }
     authCb = cb;
     authError.style.display = 'none';
@@ -1520,16 +1564,32 @@ function imgSlotFallback(img, filename) {
   }
   function closeAuth() { authOverlay.classList.remove('show'); authCb = null; }
   function submitAuth() {
+    const rem = lockRemaining();
+    if (rem > 0) { showAuthError(`已锁定，请 ${Math.ceil(rem / 1000)} 秒后再试`); return; }
     const val = authInput.value.trim();
     if (!/^\d{8}$/.test(val)) { showAuthError('请输入 8 位数字密码'); return; }
-    if (val === PASSCODE) {
+    if (sha256Hex(val) === PASSCODE_HASH) {
       sessionStorage.setItem('yxh_auth', '1');
+      errorCount = 0; lockUntil = 0;
+      localStorage.removeItem('yxh_auth_err');
+      localStorage.removeItem('yxh_auth_lock');
       const cb = authCb;
       closeAuth();
-      showToast('✓ 验证通过');
+      enterAuthorMode();
+      logOp('作者验证', '密码验证', '成功', '进入作者模式');
+      showToast('✓ 验证通过，已进入作者模式');
       if (cb) cb();
     } else {
-      showAuthError('✗ 密码错误，请重试');
+      errorCount++;
+      localStorage.setItem('yxh_auth_err', String(errorCount));
+      logOp('作者验证', '密码验证', '失败', `密码错误（连续第 ${errorCount} 次）`);
+      if (errorCount >= MAX_TRIES) {
+        lockUntil = Date.now() + LOCK_MS;
+        localStorage.setItem('yxh_auth_lock', String(lockUntil));
+        showAuthError(`✗ 密码错误，已连续错误 ${errorCount} 次，锁定 10 分钟`);
+      } else {
+        showAuthError(`✗ 密码错误，请重试（还可尝试 ${MAX_TRIES - errorCount} 次）`);
+      }
     }
   }
   function showAuthError(msg) {
@@ -1540,6 +1600,8 @@ function imgSlotFallback(img, filename) {
     authCard.classList.add('shake');
     authInput.select();
   }
+  /* 本次会话已验证 → 刷新后直接恢复作者模式，不闪烁 */
+  if (sessionStorage.getItem('yxh_auth') === '1') enterAuthorMode();
   /* 密码显示/隐藏切换 */
   const authEye = document.getElementById('authEye');
   authEye.addEventListener('click', () => {
@@ -1582,6 +1644,7 @@ function imgSlotFallback(img, filename) {
     for (const r of rows) { if (r.section === 'hero-bg') await idbDel(r.id); }
     applyHeroBg('assets/photography/landscape/land_1.jpg');
     bgMenu.classList.remove('show');
+    logOp('背景图', '恢复默认', '成功');
     showToast('✓ 已恢复默认背景');
   });
   document.getElementById('bgClose').addEventListener('click', () => bgMenu.classList.remove('show'));
@@ -1592,8 +1655,9 @@ function imgSlotFallback(img, filename) {
     try {
       const data = await fileToDataURL(f);
       await saveHeroBg(data);
+      logOp('背景图', '上传替换', '成功', f.name);
       showToast('✓ 背景已更新');
-    } catch (err) { showToast('✗ 背景更新失败'); }
+    } catch (err) { logOp('背景图', '上传替换', '失败', f.name); showToast('✗ 背景更新失败'); }
     bgInput.value = '';
   });
 
@@ -1619,10 +1683,7 @@ function imgSlotFallback(img, filename) {
     try {
       const data = await fileToDataURL(f);
       const fig = img.closest('[data-lb]');
-      if (fig && fig.dataset.avatar !== undefined) {
-        /* 头像：更新头像记录 */
-        await saveAvatar(data);
-      } else if (fig && fig.dataset.uid) {
+      if (fig && fig.dataset.uid) {
         /* 本地上传的作品：直接更新记录 */
         await idbPut({ id: Number(fig.dataset.uid), section: fig.dataset.section || 'brand', data, cap: img.dataset.cap || img.alt || '上传作品' });
       } else {
@@ -1634,19 +1695,15 @@ function imgSlotFallback(img, filename) {
       img.src = data;
       lbImg.src = data;
       repMenu.classList.remove('show');
+      logOp('照片替换', (fig && fig.dataset.section) || '静态图片', '成功', f.name);
       showToast('✓ 照片已替换');
-    } catch (err) { showToast('✗ 替换失败，请重试'); }
+    } catch (err) { logOp('照片替换', '未知', '失败', f && f.name); showToast('✗ 替换失败，请重试'); }
   }
-  /* 恢复原图（头像恢复默认；静态图片恢复初始文件） */
+  /* 恢复原图（静态图片恢复初始文件） */
   document.getElementById('repReset').addEventListener('click', async () => {
     const img = lbList[lbIdx];
     if (!img) return;
     const fig = img.closest('[data-lb]');
-    if (fig && fig.dataset.avatar !== undefined) {
-      await resetAvatar();
-      repMenu.classList.remove('show');
-      return;
-    }
     if (fig && fig.dataset.uid) { repMenu.classList.remove('show'); return; }
     const key = img.dataset.origSrc;
     if (key) {
@@ -1654,6 +1711,7 @@ function imgSlotFallback(img, filename) {
       delete img.dataset.origSrc;
       img.src = key;
       lbImg.src = key;
+      logOp('照片替换', '静态图片', '恢复原图', key);
       showToast('✓ 已恢复原图');
     }
     repMenu.classList.remove('show');
@@ -1676,8 +1734,9 @@ function imgSlotFallback(img, filename) {
       document.querySelectorAll('.qr-pop img, .rep-qr').forEach(im => {
         if (im.getAttribute('src') === QR_KEY) { im.dataset.origSrc = QR_KEY; im.src = data; }
       });
+      logOp('微信二维码', '上传替换', '成功', f.name);
       showToast('✓ 二维码已更新');
-    } catch (err) { showToast('✗ 更新失败，请重试'); }
+    } catch (err) { logOp('微信二维码', '上传替换', '失败', f.name); showToast('✗ 更新失败，请重试'); }
     qrInput.value = '';
   });
 
@@ -1701,6 +1760,7 @@ function imgSlotFallback(img, filename) {
     for (const r of rows) { if (r.section === META_KEY) await idbDel(r.id); }
     await idbAdd({ section: META_KEY, data: v, cap: META_KEY });
     metaMenu.classList.remove('show');
+    logOp('Hero一句话', '编辑保存', '成功', v.slice(0, 20));
     showToast('✓ 已保存');
   }
   document.getElementById('metaSave').addEventListener('click', () => {
