@@ -511,6 +511,22 @@ body.author-mode .lb-replace { display: inline-block; animation: fadeUp 0.4s var
 }
 body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both; }
 #bgDot:hover { transform: translate(-2px,-2px) rotate(-8deg); box-shadow: 6px 6px 0 0 var(--ink); }
+#pubDot {
+  position: fixed; top: 86px; right: 76px; z-index: 1500;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--green); border: 3px solid var(--ink);
+  box-shadow: var(--shadow-sm); font-size: 1.15rem;
+  display: none; align-items: center; justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) both; }
+#pubDot:hover { transform: translate(-2px,-2px) rotate(8deg); box-shadow: 6px 6px 0 0 var(--ink); }
+.pub-summary { font-size: 0.85rem; font-weight: 700; margin: 6px 0 10px; padding: 8px 12px; background: var(--bg-soft); border: 2.5px solid var(--ink); border-radius: 10px; }
+.pub-log {
+  margin-top: 12px; max-height: 170px; overflow: auto; text-align: left;
+  background: var(--bg-soft); border: 2.5px solid var(--ink); border-radius: 10px;
+  padding: 10px 12px; font-size: 0.72rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+}
 .overlay {
   position: fixed; inset: 0; z-index: 4500;
   background: rgba(11,11,11,0.72); backdrop-filter: blur(6px);
@@ -568,7 +584,7 @@ body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both
   opacity: 0; pointer-events: none; transition: all 0.3s var(--ease);
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-@media (max-width: 768px) { #bgDot { top: 82px; right: 12px; width: 42px; height: 42px; } }
+@media (max-width: 768px) { #bgDot { top: 82px; right: 12px; width: 42px; height: 42px; } #pubDot { top: 82px; right: 64px; width: 42px; height: 42px; } }
 
 /* ============================================================
    响应式
@@ -1110,6 +1126,7 @@ body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both
 
 <!-- ================= 背景管理圆点（右上角） ================= -->
 <button id="bgDot" title="替换背景图（需密码）">🖼️</button>
+<button id="pubDot" title="发布替换内容到线上，所有访客可见（需密码）">☁️</button>
 <input type="file" id="bgInput" hidden accept="image/*">
 
 <!-- 密码验证弹窗 -->
@@ -1139,6 +1156,26 @@ body.author-mode #bgDot { display: flex; animation: fadeUp 0.4s var(--ease) both
       <button class="btn-line" id="bgRestore">恢复默认背景</button>
       <button class="btn-no" id="bgClose">关闭</button>
     </div>
+  </div>
+</div>
+
+<!-- 作者发布弹窗（把本机替换/上传内容提交到 GitHub 仓库） -->
+<div class="overlay" id="pubMenu">
+  <div class="modal-card">
+    <h3>☁️ 发布到线上</h3>
+    <p>把本机替换的图片、上传的新作品提交到 GitHub 仓库，<br>发布成功后所有访客约 1 分钟即可看到（GitHub Pages 自动更新）。</p>
+    <div class="pub-summary" id="pubSummary">正在统计待发布内容…</div>
+    <div class="auth-wrap">
+      <input class="auth-input" id="pubTokenInput" type="password" placeholder="粘贴 github_pat_... 令牌" autocomplete="off">
+    </div>
+    <div class="auth-error" id="pubTokenState" style="display:block"></div>
+    <div class="modal-actions" style="flex-direction:column">
+      <button class="btn-line" id="pubTokenSave" type="button">保存并验证令牌</button>
+      <button class="btn-ok" id="pubGo" type="button">🚀 开始发布</button>
+      <button class="btn-no" id="pubClose" type="button">关闭</button>
+    </div>
+    <pre class="pub-log" id="pubLog"></pre>
+    <span class="rep-note">令牌创建：github.com → Settings → Developer settings → Fine-grained tokens → 仅授权本仓库（yexuhangace.github.io）的 Contents 读写权限。令牌只保存在你本机浏览器，不会随网页泄露。</span>
   </div>
 </div>
 
@@ -1363,15 +1400,18 @@ function imgSlotFallback(img, filename) {
     land: document.getElementById('grid-land')
   };
 
-  function addUploadCard(section, src, cap, id, animate) {
+  function addUploadCard(section, src, cap, id, animate, remote) {
     const host = GRID_MAP[section];
     if (!host) return;
     const fig = document.createElement('figure');
     fig.className = 'card up-item' + (animate ? ' reveal active' : '');
     fig.setAttribute('data-lb', '');
-    if (id != null) { fig.dataset.uid = id; fig.dataset.section = section; }
-    fig.innerHTML = '<img src="' + src + '" alt="' + cap + '" data-cap="上传 · ' + cap + '"><button class="up-del" title="删除">✕</button>';
-    fig.querySelector('.up-del').addEventListener('click', e => {
+    if (id != null && !remote) { fig.dataset.uid = id; fig.dataset.section = section; }
+    if (remote) fig.dataset.remote = '1';
+    fig.innerHTML = '<img src="' + src + '" alt="' + cap + '" data-cap="' + (remote ? '线上 · ' : '上传 · ') + cap + '">'
+      + (remote ? '' : '<button class="up-del" title="删除">✕</button>');
+    const del = fig.querySelector('.up-del');
+    if (del) del.addEventListener('click', e => {
       e.stopPropagation();
       idbDel(id).catch(() => {});
       fig.remove();
@@ -1432,13 +1472,23 @@ function imgSlotFallback(img, filename) {
     });
   });
 
-  /* 启动：恢复已上传作品 / 背景图 / 一句话 / 图片替换覆盖 */
-  Promise.all([idbAll().catch(() => []), ovrAll().catch(() => [])]).then(([rows, ovs]) => {
+  /* 启动：先拉线上作品清单（访客可见已发布内容），再叠加本机未发布内容 */
+  const fetchManifest = () => fetch('assets/uploads/manifest.json', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : null).catch(() => null);
+  Promise.all([idbAll().catch(() => []), ovrAll().catch(() => []), fetchManifest()]).then(([rows, ovs, man]) => {
+    /* 线上已发布作品：所有访客都能看到 */
+    if (man && Array.isArray(man.items)) {
+      man.items.forEach(it => addUploadCard(it.section, it.src, it.cap || '作品', null, false, true));
+    }
+    let localMeta = false;
     (rows || []).forEach(r => {
       if (r.section === 'hero-bg') applyHeroBg(r.data);
-      else if (r.section === META_KEY) heroMeta.textContent = r.data;
-      else addUploadCard(r.section, r.data, r.cap, r.id, false);
+      else if (r.section === META_KEY) { heroMeta.textContent = r.data; localMeta = true; }
+      else if (!r.pub) addUploadCard(r.section, r.data, r.cap, r.id, false);
+      /* r.pub 的本地上传已由线上清单渲染，跳过避免重复 */
     });
+    /* 线上一句话：仅当本机没有未发布编辑时采用 */
+    if (man && man.meta && !localMeta && heroMeta) heroMeta.textContent = man.meta;
     (ovs || []).forEach(o => {
       document.querySelectorAll('img').forEach(im => {
         if (im.getAttribute('src') === o.src) { im.dataset.origSrc = o.src; im.src = o.data; }
@@ -1768,6 +1818,144 @@ function imgSlotFallback(img, filename) {
   });
   metaInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') document.getElementById('metaSave').click();
+  });
+
+  /* ---------- 作者通道：一键发布到 GitHub 仓库（发布后所有访客可见） ---------- */
+  const GH_API = 'https://api.github.com/repos/yexuhangace/yexuhangace.github.io/contents/';
+  const GH_BRANCH = 'main';
+  const TOKEN_KEY = 'yxh_gh_token';
+  const pubDot = document.getElementById('pubDot');
+  const pubMenu = document.getElementById('pubMenu');
+  const pubLogEl = document.getElementById('pubLog');
+  const getToken = () => localStorage.getItem(TOKEN_KEY) || '';
+  const b64encUtf8 = s => btoa(unescape(encodeURIComponent(s)));
+  const b64decUtf8 = s => decodeURIComponent(escape(atob(s.replace(/\s/g, ''))));
+  function pubLogMsg(msg) { pubLogEl.textContent += msg + '\n'; pubLogEl.scrollTop = pubLogEl.scrollHeight; }
+  /* 仓库路径归一化：绝对 URL → 相对仓库根的路径 */
+  function normRepoPath(p) {
+    try { return new URL(p, location.href).pathname.replace(/^\/+/, ''); } catch (e) { return p.replace(/^\/+/, ''); }
+  }
+  async function ghApi(path, options) {
+    const res = await fetch(GH_API + path, Object.assign({
+      headers: {
+        'Authorization': 'Bearer ' + getToken(),
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    }, options));
+    if (res.status === 204) return {};
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.message || ('HTTP ' + res.status));
+    return body;
+  }
+  /* 提交单个文件（dataURL → base64 内容）；已存在则取 sha 更新 */
+  async function ghCommitFile(relPath, dataURL, message) {
+    const base64 = dataURL.split(',')[1];
+    const bytes = Math.floor(base64.length * 0.75);
+    if (bytes > 950 * 1024) throw new Error('文件超过 950KB 上限，已跳过：' + relPath + '（请压缩后重试）');
+    let sha;
+    try {
+      const f = await ghApi(encodeURI(relPath).replace(/%2F/g, '/') + '?ref=' + GH_BRANCH);
+      sha = f.sha;
+    } catch (e) { /* 文件不存在 → 新建，无 sha */ }
+    await ghApi(encodeURI(relPath).replace(/%2F/g, '/'), {
+      method: 'PUT',
+      body: JSON.stringify({ message, content: base64, branch: GH_BRANCH, sha })
+    });
+  }
+  async function ghGetJson(relPath) {
+    try {
+      const f = await ghApi(encodeURI(relPath).replace(/%2F/g, '/') + '?ref=' + GH_BRANCH);
+      return JSON.parse(b64decUtf8(f.content));
+    } catch (e) { return null; }
+  }
+  /* 统计待发布内容 */
+  async function refreshPubSummary() {
+    const [rows, ovs] = await Promise.all([idbAll(), ovrAll()]);
+    const repl = (ovs || []).length;
+    const news = (rows || []).filter(r => r.section !== 'hero-bg' && r.section !== META_KEY && !r.pub).length;
+    const bg = (rows || []).some(r => r.section === 'hero-bg');
+    const meta = (rows || []).some(r => r.section === META_KEY);
+    document.getElementById('pubSummary').innerHTML =
+      '待发布：<b>' + repl + '</b> 张替换图片' + (bg ? '、<b>1</b> 张首页背景' : '')
+      + '、<b>' + news + '</b> 个新作品' + (meta ? '、<b>1</b> 条一句话' : '');
+  }
+  pubDot.addEventListener('click', () => requestAuth(() => {
+    pubLogEl.textContent = '';
+    document.getElementById('pubTokenState').textContent = getToken() ? '✓ 已保存令牌，可直接发布' : '✗ 尚未保存令牌，请先粘贴并验证';
+    pubMenu.classList.add('show');
+    refreshPubSummary();
+  }));
+  document.getElementById('pubClose').addEventListener('click', () => pubMenu.classList.remove('show'));
+  pubMenu.addEventListener('click', e => { if (e.target === pubMenu) pubMenu.classList.remove('show'); });
+  /* 保存并验证令牌 */
+  document.getElementById('pubTokenSave').addEventListener('click', async () => {
+    const t = document.getElementById('pubTokenInput').value.trim();
+    if (!t) { document.getElementById('pubTokenState').textContent = '✗ 请先粘贴令牌'; return; }
+    document.getElementById('pubTokenState').textContent = '⏳ 正在验证…';
+    try {
+      const res = await fetch('https://api.github.com/user', { headers: { 'Authorization': 'Bearer ' + t, 'Accept': 'application/vnd.github+json' } });
+      if (!res.ok) throw new Error('令牌无效或无权限（HTTP ' + res.status + '）');
+      const u = await res.json();
+      localStorage.setItem(TOKEN_KEY, t);
+      document.getElementById('pubTokenState').textContent = '✓ 令牌有效，已保存（账号：' + u.login + '）';
+      pubLogMsg('✓ 令牌验证通过：' + u.login);
+    } catch (e) {
+      localStorage.removeItem(TOKEN_KEY);
+      document.getElementById('pubTokenState').textContent = '✗ ' + e.message + '（国内网络可能需开启系统代理）';
+    }
+  });
+  /* 执行发布 */
+  document.getElementById('pubGo').addEventListener('click', async () => {
+    if (!getToken()) { showToast('✗ 请先保存 GitHub 令牌'); return; }
+    const btn = document.getElementById('pubGo');
+    btn.disabled = true;
+    pubLogEl.textContent = '';
+    try {
+      const [rows, ovs] = await Promise.all([idbAll(), ovrAll()]);
+      /* 1. 替换类图片（二维码 / 静态图覆盖） */
+      for (const o of (ovs || [])) {
+        const p = normRepoPath(o.src);
+        pubLogMsg('→ 提交替换图片 ' + p);
+        await ghCommitFile(p, o.data, '发布：替换图片 ' + p);
+        pubLogMsg('  ✓ 完成');
+      }
+      /* 2. 首页背景 */
+      const bgRow = (rows || []).find(r => r.section === 'hero-bg');
+      if (bgRow) {
+        pubLogMsg('→ 提交首页背景');
+        await ghCommitFile('assets/photography/landscape/land_1.jpg', bgRow.data, '发布：更新首页背景');
+        pubLogMsg('  ✓ 完成');
+      }
+      /* 3. 读取线上清单 */
+      const man = (await ghGetJson('assets/uploads/manifest.json')) || { v: 1, items: [] };
+      man.items = Array.isArray(man.items) ? man.items : [];
+      /* 4. 新作品提交 */
+      for (const r of (rows || [])) {
+        if (r.section === 'hero-bg' || r.section === META_KEY || r.pub) continue;
+        const ext = (r.data && r.data.indexOf('data:image/png') === 0) ? 'png' : 'jpg';
+        const fname = 'u' + Date.now() + Math.floor(Math.random() * 1000);
+        const path = 'assets/uploads/' + r.section + '/' + fname + '.' + ext;
+        pubLogMsg('→ 提交新作品 ' + path);
+        await ghCommitFile(path, r.data, '发布：新作品 ' + (r.cap || r.section));
+        man.items.push({ id: fname, section: r.section, src: path, cap: r.cap || '上传作品' });
+        await idbPut(Object.assign({}, r, { pub: 1, pubSrc: path }));
+        pubLogMsg('  ✓ 完成');
+      }
+      /* 5. 一句话同步 */
+      const metaRow = (rows || []).find(r => r.section === META_KEY);
+      if (metaRow) man.meta = metaRow.data;
+      man.updated = new Date().toISOString();
+      pubLogMsg('→ 更新作品清单 manifest.json（' + man.items.length + ' 个作品）');
+      await ghCommitFile('assets/uploads/manifest.json',
+        'data:application/json;base64,' + b64encUtf8(JSON.stringify(man, null, 2)), '发布：更新作品清单');
+      pubLogMsg('\n✅ 全部发布成功！GitHub Pages 约 1 分钟后对所有访客生效。');
+      showToast('✓ 发布成功，约 1 分钟后全站生效');
+      refreshPubSummary();
+    } catch (e) {
+      pubLogMsg('\n✗ 发布中断：' + e.message);
+      showToast('✗ 发布失败：' + e.message);
+    } finally { btn.disabled = false; }
   });
 
   /* ---------- 回到顶部 ---------- */
