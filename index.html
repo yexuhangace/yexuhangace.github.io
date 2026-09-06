@@ -468,6 +468,20 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
 }
 body.author-mode .lb-replace { display: inline-block; animation: fadeUp 0.4s var(--ease) both; }
 .lb-replace:hover { background: var(--yellow); transform: translate(-2px,-2px); box-shadow: 4px 4px 0 0 var(--ink); }
+/* 封面图替换按钮（作者模式显示） */
+.cover-edit {
+  position: absolute; top: 10px; right: 10px; z-index: 5;
+  display: none; gap: 6px;
+}
+body.author-mode .cover-edit { display: flex; animation: fadeUp 0.4s var(--ease) both; }
+.cover-edit button {
+  font-family: inherit; font-weight: 800; font-size: 0.72rem;
+  padding: 6px 10px; border: 2px solid var(--ink); border-radius: 8px;
+  background: var(--yellow); color: var(--ink); cursor: pointer;
+  box-shadow: var(--shadow-sm); transition: 0.15s;
+}
+.cover-edit button:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 0 var(--ink); }
+.cover-edit .cover-restore { background: var(--bg); }
 .rep-qr {
   width: 150px; height: 150px; object-fit: cover; display: block;
   border: 3px solid var(--ink); border-radius: 14px; margin: 2px auto 14px;
@@ -1198,6 +1212,7 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
 </div>
 <input type="file" id="repInput" hidden accept="image/*">
 <input type="file" id="qrInput" hidden accept="image/*">
+<input type="file" id="coverInput" hidden accept="image/*">
 
 <div id="toast"></div>
 
@@ -1807,9 +1822,9 @@ function imgSlotFallback(img, filename) {
       img.src = data;
       lbImg.src = data;
       repMenu.classList.remove('show');
-      logOp('照片替换', (fig && fig.dataset.section) || '静态图片', '成功', f.name);
+      logOp('内部作品图', (fig && fig.dataset.section) || '静态图片', '成功', f.name);
       showToast('✓ 照片已替换');
-    } catch (err) { logOp('照片替换', '未知', '失败', f && f.name); showToast('✗ 替换失败，请重试'); }
+    } catch (err) { logOp('内部作品图', '未知', '失败', f && f.name); showToast('✗ 替换失败，请重试'); }
   }
   /* 恢复原图（静态图片恢复初始文件） */
   document.getElementById('repReset').addEventListener('click', async () => {
@@ -1823,7 +1838,7 @@ function imgSlotFallback(img, filename) {
       delete img.dataset.origSrc;
       img.src = key;
       lbImg.src = key;
-      logOp('照片替换', '静态图片', '恢复原图', key);
+      logOp('内部作品图', '静态图片', '恢复原图', key);
       showToast('✓ 已恢复原图');
     }
     repMenu.classList.remove('show');
@@ -1851,6 +1866,74 @@ function imgSlotFallback(img, filename) {
     } catch (err) { logOp('微信二维码', '上传替换', '失败', f.name); showToast('✗ 更新失败，请重试'); }
     qrInput.value = '';
   });
+
+  /* ---------- 封面图独立管理（替换 / 恢复 · 密码保护 · 与背景图、内部作品图互不干扰） ---------- */
+  const coverInput = document.getElementById('coverInput');
+  let activeCoverImg = null; // 当前操作的封面图元素
+  /* 为每个封面注入「替换 / 恢复」按钮（仅作者模式可见） */
+  document.querySelectorAll('.ph-cover').forEach(cover => {
+    const img = cover.querySelector('img');
+    if (!img) return;
+    const edit = document.createElement('div');
+    edit.className = 'cover-edit';
+    edit.innerHTML = '<button class="cover-replace" type="button">替换封面</button><button class="cover-restore" type="button" style="display:none">恢复封面</button>';
+    cover.appendChild(edit);
+    edit.querySelector('.cover-replace').addEventListener('click', e => {
+      e.stopPropagation();
+      requestAuth(() => { activeCoverImg = img; coverInput.click(); });
+    });
+    edit.querySelector('.cover-restore').addEventListener('click', e => {
+      e.stopPropagation();
+      requestAuth(() => restoreCover(img));
+    });
+  });
+  coverInput.addEventListener('change', async () => {
+    const f = coverInput.files[0];
+    if (f && activeCoverImg) await replaceCover(activeCoverImg, f);
+    coverInput.value = '';
+    activeCoverImg = null;
+  });
+  /* 替换封面图：写入 ovr 覆盖记录（key 为封面原始路径，与内部作品图独立存储） */
+  async function replaceCover(img, f) {
+    showToast('⏳ 正在替换封面…');
+    try {
+      const data = await fileToDataURL(f);
+      const key = img.dataset.origSrc || (img.getAttribute('src') || '').split('?')[0];
+      await ovrAdd({ src: key, data });
+      img.dataset.origSrc = key;
+      img.src = data;
+      /* 显示恢复按钮 */
+      const restoreBtn = img.closest('.ph-cover')?.querySelector('.cover-restore');
+      if (restoreBtn) restoreBtn.style.display = '';
+      logOp('封面图', '上传替换', '成功', f.name + ' → ' + key);
+      showToast('✓ 封面已替换');
+    } catch (err) { logOp('封面图', '上传替换', '失败', f && f.name); showToast('✗ 封面替换失败，请重试'); }
+  }
+  /* 恢复封面图：撤销替换，回到原始版本 */
+  async function restoreCover(img) {
+    const key = img.dataset.origSrc;
+    if (!key) { showToast('当前已是原始封面'); return; }
+    try {
+      await ovrDel(key);
+      delete img.dataset.origSrc;
+      img.src = key;
+      const restoreBtn = img.closest('.ph-cover')?.querySelector('.cover-restore');
+      if (restoreBtn) restoreBtn.style.display = 'none';
+      logOp('封面图', '恢复原图', '成功', key);
+      showToast('✓ 已恢复原始封面');
+    } catch (err) { logOp('封面图', '恢复原图', '失败', key); showToast('✗ 恢复失败'); }
+  }
+  /* 启动时：对已替换过的封面显示恢复按钮 */
+  ovrAll().then(ovs => {
+    const keys = new Set((ovs || []).map(o => o.src));
+    document.querySelectorAll('.ph-cover img').forEach(img => {
+      const base = (img.getAttribute('src') || '').split('?')[0];
+      if (keys.has(base)) {
+        const restoreBtn = img.closest('.ph-cover')?.querySelector('.cover-restore');
+        if (restoreBtn) restoreBtn.style.display = '';
+      }
+    });
+  }).catch(() => {});
 
   /* ---------- Hero 一句话编辑（点击 → 密码 → 自定义内容） ---------- */
   const metaMenu = document.getElementById('metaMenu');
