@@ -1,10 +1,18 @@
 {
   "v": 1,
-  "items": [],
+  "items": [
+    {
+      "id": "u1788680054448163",
+      "section": "product",
+      "src": "assets/uploads/product/u1788680054448163.jpg",
+      "cap": "微信图片_20251016174318_49_94.jpg"
+    }
+  ],
   "meta": "求职意向 · 产品实习生 ｜ 坐标 · 广东东莞 ｜ PS · CDR · PR · AIGC",
-  "ver": 1788678180707,
+  "ver": 1788680042622,
   "vers": {
-    "assets/wechat_qr.png": 1788678180707
+    "assets/wechat_qr.png": 1788680042622,
+    "assets/photography/landscape/land_1.jpg": 1788680042622
   },
-  "updated": "2026-09-06T07:03:05.996Z"
+  "updated": "2026-09-06T07:34:17.476Z"
 }
