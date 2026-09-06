@@ -1,0 +1,17 @@
+﻿{
+    "v":  1,
+    "ver":  1788677444353,
+    "items":  [
+                  {
+                      "section":  "brand",
+                      "id":  "e2e_test",
+                      "cap":  "E2E测试作品",
+                      "src":  "assets/uploads/brand/e2e_test.jpg"
+                  }
+              ],
+    "meta":  "E2E测试一句话",
+    "vers":  {
+                 "assets/uploads/brand/e2e_test.jpg":  1788677444353
+             },
+    "updated":  "2026-09-06T06:50:44.3731704Z"
+}
