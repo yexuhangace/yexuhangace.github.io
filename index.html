@@ -1838,7 +1838,12 @@ function imgSlotFallback(img, filename) {
     }, options));
     if (res.status === 204) return {};
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(body.message || ('HTTP ' + res.status));
+    if (!res.ok) {
+      if (res.status === 403 && /not accessible|Resource not accessible/i.test(body.message || '')) {
+        throw new Error('令牌权限不足：请确认①已勾选仓库 yexuhangace.github.io ②Contents 权限为 Read and write（Classic 令牌需勾选 repo）');
+      }
+      throw new Error(body.message || ('HTTP ' + res.status));
+    }
     return body;
   }
   /* 提交单个文件（dataURL → base64 内容）；已存在则取 sha 更新 */
@@ -1885,15 +1890,26 @@ function imgSlotFallback(img, filename) {
     if (!t) { document.getElementById('pubTokenState').textContent = '✗ 请先粘贴令牌'; return; }
     document.getElementById('pubTokenState').textContent = '⏳ 正在验证…';
     try {
-      const res = await fetch('https://api.github.com/user', { headers: { 'Authorization': 'Bearer ' + t, 'Accept': 'application/vnd.github+json' } });
-      if (!res.ok) throw new Error('令牌无效或无权限（HTTP ' + res.status + '）');
-      const u = await res.json();
+      const headers = { 'Authorization': 'Bearer ' + t, 'Accept': 'application/vnd.github+json' };
+      const meRes = await fetch('https://api.github.com/user', { headers });
+      if (!meRes.ok) throw new Error('令牌无效（HTTP ' + meRes.status + '），请检查是否复制完整');
+      const u = await meRes.json();
+      /* 进一步验证对目标仓库的写入权限（/user 通过不代表能写仓库） */
+      const repoRes = await fetch('https://api.github.com/repos/yexuhangace/yexuhangace.github.io', { headers });
+      if (repoRes.status === 404) {
+        throw new Error('令牌无法访问该仓库：Repository access 请选择 yexuhangace.github.io');
+      }
+      if (!repoRes.ok) throw new Error('访问仓库失败（HTTP ' + repoRes.status + '）');
+      const repo = await repoRes.json();
+      if (!repo.permissions || !repo.permissions.push) {
+        throw new Error('令牌为只读：Contents 权限需设为 Read and write（Classic 令牌需勾选 repo）');
+      }
       localStorage.setItem(TOKEN_KEY, t);
-      document.getElementById('pubTokenState').textContent = '✓ 令牌有效，已保存（账号：' + u.login + '）';
-      pubLogMsg('✓ 令牌验证通过：' + u.login);
+      document.getElementById('pubTokenState').textContent = '✓ 令牌有效且具备写入权限（账号：' + u.login + '），可直接发布';
+      pubLogMsg('✓ 令牌验证通过：' + u.login + '（有仓库写入权限）');
     } catch (e) {
       localStorage.removeItem(TOKEN_KEY);
-      document.getElementById('pubTokenState').textContent = '✗ ' + e.message + '（国内网络可能需开启系统代理）';
+      document.getElementById('pubTokenState').textContent = '✗ ' + e.message;
     }
   });
   /* 执行发布 */
