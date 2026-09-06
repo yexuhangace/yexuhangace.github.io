@@ -314,7 +314,6 @@ section { padding: 6rem 0 1rem; }
 
 /* ---------- 上传组件 ---------- */
 .up-toolbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 20px 0 6px; }
-.up-hint { font-size: 0.8rem; color: var(--ink-3); }
 .upload-btn {
   font-size: 0.75rem; font-weight: 800; padding: 5px 12px;
   border: 2.5px dashed var(--ink); border-radius: 10px; background: var(--bg-soft);
@@ -418,13 +417,10 @@ body.author-mode .upload-btn { display: inline-flex; animation: fadeUp 0.4s var(
 .contact-card a.val:hover { text-decoration: underline; text-decoration-thickness: 3px; text-decoration-color: var(--red); }
 .qr-tip { display: block; font-size: 0.8rem; color: var(--ink-3); margin-top: 8px; }
 .qr-pop {
-  position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translate(-50%, 8px);
-  opacity: 0; pointer-events: none; transition: all 0.3s;
-  background: var(--bg); border: 3px solid var(--ink); border-radius: 16px;
-  padding: 12px; box-shadow: var(--shadow); z-index: 5;
+  margin-top: 12px; background: var(--bg); border: 3px solid var(--ink); border-radius: 16px;
+  padding: 12px; box-shadow: var(--shadow-sm); display: inline-block;
 }
-.qr-pop img { width: 160px; height: 160px; border-radius: 8px; }
-.contact-card:hover .qr-pop, .qr-pop:hover { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.qr-pop img { width: 160px; height: 160px; border-radius: 8px; display: block; cursor: pointer; }
 
 /* ============================================================
    页脚 / 灯箱 / 动效
@@ -768,7 +764,6 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
       </div>
       <div class="up-toolbar">
         <button class="upload-btn" data-target="jingtian">＋ 上传海报</button>
-        <span class="up-hint">上传仅保存在本浏览器 · 永久展示请将图片放入 assets/graphic 后更新网站</span>
       </div>
       <div class="poster-grid" id="grid-jingtian"></div>
     </div>
@@ -784,7 +779,6 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
       <p>从 0 到 1 的自拟品牌全案：Logo 应用、IP 形象、表情包与全线物料样机。</p>
       <div class="up-toolbar">
         <button class="upload-btn" data-target="brand">＋ 上传作品</button>
-        <span class="up-hint">上传仅保存在本浏览器 · 永久展示请放入 assets/brand 后更新网站</span>
       </div>
     </div>
     <div class="bento reveal-group">
@@ -837,7 +831,6 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
       <p>海报、排版与视觉实验。点击可放大查看。</p>
       <div class="up-toolbar">
         <button class="upload-btn" data-target="graphic">＋ 上传作品</button>
-        <span class="up-hint">上传仅保存在本浏览器 · 永久展示请放入 assets/graphic 后更新网站</span>
       </div>
     </div>
     <div class="masonry reveal-group">
@@ -854,10 +847,9 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
       <figure class="card reveal" data-lb><img src="assets/graphic/graphic_8.jpg" alt="平面作品" loading="lazy" data-cap="平面作品 · 七"></figure>
     </div>
 
-    <div class="group-title reveal" style="margin-top:48px;">课程作业 · 黄浦文旅创意设计</div>
+    <div class="group-title reveal" style="margin-top:48px;">课程作业</div>
     <div class="up-toolbar" style="margin-top:-10px;">
       <button class="upload-btn" data-target="huangpu">＋ 上传作品</button>
-      <span class="up-hint">上传仅保存在本浏览器 · 永久展示请放入 assets/huangpu 后更新网站</span>
     </div>
     <div class="duo-grid reveal-group">
       <figure class="card cover reveal" data-lb><img src="assets/huangpu/huangpu_cover.jpg" alt="黄浦文旅创意设计封面" loading="lazy" data-cap="黄浦文旅创意设计 · 封面"></figure>
@@ -1102,13 +1094,14 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
         <a class="val" href="tel:15817742516">158-1774-2516</a>
         <span class="qr-tip">工作日 9:00 - 21:00</span>
       </div>
-      <div class="card contact-card reveal" style="position:relative">
+      <div class="card contact-card reveal">
         <div class="contact-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg>
         </div>
         <h3>微信</h3>
         <span class="val">mikapikasaki</span>
         <div class="qr-pop"><img src="assets/wechat_qr.png" alt="微信二维码" loading="lazy"></div>
+        <span class="qr-tip">微信扫码 · 直接加好友</span>
       </div>
     </div>
   </div>
@@ -1150,7 +1143,7 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
 <div class="overlay" id="bgMenu">
   <div class="modal-card">
     <h3>🌄 背景图设置</h3>
-    <p>替换首页 Hero 背景照片 · 仅保存在本浏览器</p>
+    <p>替换首页 Hero 背景照片 · 替换后点右上角 ☁️ 发布即可对所有访客生效</p>
     <div class="modal-actions" style="flex-direction:column">
       <button class="btn-ok" id="bgPick">选择新背景图片</button>
       <button class="btn-line" id="bgRestore">恢复默认背景</button>
@@ -1190,14 +1183,14 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
       <button class="btn-line" id="repReset">恢复原图</button>
       <button class="btn-no" id="repClose">关闭</button>
     </div>
-    <span class="rep-note">替换仅保存在当前浏览器 · 点击二维码可更换（需密码）</span>
+    <span class="rep-note">替换后点右上角 ☁️ 发布即可对所有访客生效 · 点击二维码可更换（需密码）</span>
   </div>
 </div>
 <!-- 编辑一句话弹窗（Hero 求职意向行） -->
 <div class="overlay" id="metaMenu">
   <div class="modal-card">
     <h3>✏️ 编辑这句话</h3>
-    <p>自定义 Hero 底部展示的一行话 · 仅保存在本浏览器</p>
+    <p>自定义 Hero 底部展示的一行话 · 保存后点右上角 ☁️ 发布即可对所有访客生效</p>
     <input class="meta-input" id="metaInput" maxlength="60" placeholder="输入你想展示的话" autocomplete="off">
     <div class="modal-actions">
       <button class="btn-no" id="metaCancel">取消</button>
@@ -1851,8 +1844,6 @@ function imgSlotFallback(img, filename) {
   /* 提交单个文件（dataURL → base64 内容）；已存在则取 sha 更新 */
   async function ghCommitFile(relPath, dataURL, message) {
     const base64 = dataURL.split(',')[1];
-    const bytes = Math.floor(base64.length * 0.75);
-    if (bytes > 950 * 1024) throw new Error('文件超过 950KB 上限，已跳过：' + relPath + '（请压缩后重试）');
     let sha;
     try {
       const f = await ghApi(encodeURI(relPath).replace(/%2F/g, '/') + '?ref=' + GH_BRANCH);
