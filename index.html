@@ -241,7 +241,6 @@ section { padding: 6rem 0 1rem; }
   width: 100%; height: 100%; min-height: 380px;
   display: flex; flex-direction: column; gap: 10px; align-items: center; justify-content: center;
 }
-.placeholder .ph-emoji { font-size: 2.6rem; }
 .placeholder b { color: var(--ink); }
 .placeholder code { background: var(--bg); border: 2px solid var(--ink); border-radius: 8px; padding: 2px 10px; font-size: 0.85rem; }
 
@@ -1222,7 +1221,7 @@ function imgSlotFallback(img, filename) {
   fig.style.cursor = 'default';
   const d = document.createElement('div');
   d.className = 'placeholder';
-  d.innerHTML = '<span class="ph-emoji">🖼️</span><div>海报槽位待放入图片</div><code>' + filename + '</code>';
+  d.innerHTML = '<code>' + filename + '</code>';
   fig.textContent = '';
   fig.appendChild(d);
 }
@@ -1466,28 +1465,101 @@ function imgSlotFallback(img, filename) {
   });
 
   /* 启动：先拉线上作品清单（访客可见已发布内容），再叠加本机未发布内容 */
+  const remoteIds = new Set();      // 已渲染的线上作品 id，避免重复添加
+  let lastManVer = 0;               // 上次拉到的 manifest 版本号
+  let hasLocalMeta = false, hasLocalBg = false;
   const fetchManifest = () => fetch('assets/uploads/manifest.json', { cache: 'no-store' })
     .then(r => r.ok ? r.json() : null).catch(() => null);
+  /* 根据 manifest.vers 给资源路径加版本号查询串，破除同路径覆盖的 CDN 缓存 */
+  function verUrl(path, man) {
+    if (!man || !man.vers) return path;
+    const base = path.split('?')[0];
+    const v = man.vers[base];
+    return v ? (base + '?v=' + v) : path;
+  }
   Promise.all([idbAll().catch(() => []), ovrAll().catch(() => []), fetchManifest()]).then(([rows, ovs, man]) => {
-    /* 线上已发布作品：所有访客都能看到 */
+    /* 线上已发布作品：所有访客都能看到（带版本号破缓存） */
     if (man && Array.isArray(man.items)) {
-      man.items.forEach(it => addUploadCard(it.section, it.src, it.cap || '作品', null, false, true));
+      man.items.forEach(it => {
+        const src = it.src + (it.src.indexOf('?') >= 0 ? '&' : '?') + 'v=' + (man.ver || '');
+        addUploadCard(it.section, src, it.cap || '作品', null, false, true);
+        if (it.id) remoteIds.add(it.id);
+      });
+      lastManVer = man.ver || 0;
     }
-    let localMeta = false;
+    hasLocalMeta = false; hasLocalBg = false;
     (rows || []).forEach(r => {
-      if (r.section === 'hero-bg') applyHeroBg(r.data);
-      else if (r.section === META_KEY) { heroMeta.textContent = r.data; localMeta = true; }
+      if (r.section === 'hero-bg') { applyHeroBg(r.data); hasLocalBg = true; }
+      else if (r.section === META_KEY) { heroMeta.textContent = r.data; hasLocalMeta = true; }
       else if (!r.pub) addUploadCard(r.section, r.data, r.cap, r.id, false);
       /* r.pub 的本地上传已由线上清单渲染，跳过避免重复 */
     });
     /* 线上一句话：仅当本机没有未发布编辑时采用 */
-    if (man && man.meta && !localMeta && heroMeta) heroMeta.textContent = man.meta;
+    if (man && man.meta && !hasLocalMeta && heroMeta) heroMeta.textContent = man.meta;
+    /* 线上背景：仅当本机没有未发布背景时采用（带版本号） */
+    if (man && !hasLocalBg && man.vers && man.vers['assets/photography/landscape/land_1.jpg']) {
+      applyHeroBg(verUrl('assets/photography/landscape/land_1.jpg', man));
+    }
+    /* 本地未发布的替换覆盖（优先级最高，忽略查询串匹配） */
     (ovs || []).forEach(o => {
       document.querySelectorAll('img').forEach(im => {
-        if (im.getAttribute('src') === o.src) { im.dataset.origSrc = o.src; im.src = o.data; }
+        const raw = im.getAttribute('src') || '';
+        if (raw.split('?')[0] === o.src) { im.dataset.origSrc = o.src; im.src = o.data; }
       });
     });
+    /* 线上已发布的替换图（仅当本机没有对应覆盖时，用版本号 URL 刷新） */
+    if (man && man.vers) {
+      const localKeys = new Set((ovs || []).map(o => o.src));
+      document.querySelectorAll('img').forEach(im => {
+        const raw = im.getAttribute('src') || '';
+        const base = raw.split('?')[0];
+        if (localKeys.has(base)) return; // 本地覆盖优先
+        const v = man.vers[base];
+        if (v) { im.dataset.origSrc = base; im.src = base + '?v=' + v; }
+      });
+    }
   }).catch(() => {});
+
+  /* ---------- 访客端后台热更新：定时拉取 manifest，发现新版本即时刷新页面内容 ---------- */
+  function anyModalOpen() {
+    return document.querySelectorAll('.overlay.show, .menu.show, .pop.show, #lightbox.show').length > 0;
+  }
+  async function pollRemoteUpdate() {
+    if (document.visibilityState !== 'visible') return;
+    if (anyModalOpen()) return; // 作者/访客操作弹窗时不打扰
+    try {
+      const man = await fetchManifest();
+      if (!man || !man.ver || man.ver <= lastManVer) return;
+      lastManVer = man.ver;
+      /* 1. 一句话：仅本机无未发布编辑时同步 */
+      if (man.meta && !hasLocalMeta && heroMeta) heroMeta.textContent = man.meta;
+      /* 2. 首页背景：仅本机无未发布背景时刷新版本号 */
+      if (!hasLocalBg && man.vers && man.vers['assets/photography/landscape/land_1.jpg']) {
+        applyHeroBg(verUrl('assets/photography/landscape/land_1.jpg', man));
+      }
+      /* 3. 替换图：用新版本号刷新所有无本地覆盖的静态图 */
+      if (man.vers) {
+        const ovs = await ovrAll().catch(() => []);
+        const localKeys = new Set(ovs.map(o => o.src));
+        document.querySelectorAll('img').forEach(im => {
+          const base = (im.getAttribute('src') || '').split('?')[0];
+          if (localKeys.has(base)) return;
+          const v = man.vers[base];
+          if (v) { im.dataset.origSrc = base; im.src = base + '?v=' + v; }
+        });
+      }
+      /* 4. 新增线上作品：补渲染未出现过的 id */
+      if (Array.isArray(man.items)) {
+        man.items.forEach(it => {
+          if (it.id && remoteIds.has(it.id)) return;
+          const src = it.src + (it.src.indexOf('?') >= 0 ? '&' : '?') + 'v=' + (man.ver || '');
+          addUploadCard(it.section, src, it.cap || '作品', null, false, true);
+          if (it.id) remoteIds.add(it.id);
+        });
+      }
+    } catch (e) { /* 静默失败，下次再试 */ }
+  }
+  setInterval(pollRemoteUpdate, 60000);
 
   /* 初始化分类计数 */
   document.querySelectorAll('.ph-cat').forEach(updateCount);
@@ -1729,7 +1801,7 @@ function imgSlotFallback(img, filename) {
         await idbPut({ id: Number(fig.dataset.uid), section: fig.dataset.section || 'brand', data, cap: img.dataset.cap || img.alt || '上传作品' });
       } else {
         /* 静态图片：写入覆盖记录，刷新后依然生效 */
-        const key = img.dataset.origSrc || img.getAttribute('src');
+        const key = img.dataset.origSrc || (img.getAttribute('src') || '').split('?')[0];
         await ovrAdd({ src: key, data });
         img.dataset.origSrc = key;
       }
@@ -1773,7 +1845,7 @@ function imgSlotFallback(img, filename) {
       const data = await fileToDataURL(f);
       await ovrAdd({ src: QR_KEY, data });
       document.querySelectorAll('.qr-pop img, .rep-qr').forEach(im => {
-        if (im.getAttribute('src') === QR_KEY) { im.dataset.origSrc = QR_KEY; im.src = data; }
+        if ((im.getAttribute('src') || '').split('?')[0] === QR_KEY) { im.dataset.origSrc = QR_KEY; im.src = data; }
       });
       logOp('微信二维码', '上传替换', '成功', f.name);
       showToast('✓ 二维码已更新');
@@ -1918,11 +1990,14 @@ function imgSlotFallback(img, filename) {
     const btn = document.getElementById('pubGo');
     btn.disabled = true;
     pubLogEl.textContent = '';
+    const publishVer = Date.now(); // 本次发布版本号（缓存破除依据）
     try {
       const [rows, ovs] = await Promise.all([idbAll(), ovrAll()]);
+      const vers = {}; // 文件级版本映射：同路径覆盖用 ?v=vers[p] 破缓存
       /* 1. 替换类图片（二维码 / 静态图覆盖） */
       for (const o of (ovs || [])) {
         const p = normRepoPath(o.src);
+        vers[p] = publishVer;
         pubLogMsg('→ 提交替换图片 ' + p);
         await ghCommitFile(p, o.data, '发布：替换图片 ' + p);
         pubLogMsg('  ✓ 完成');
@@ -1930,6 +2005,7 @@ function imgSlotFallback(img, filename) {
       /* 2. 首页背景 */
       const bgRow = (rows || []).find(r => r.section === 'hero-bg');
       if (bgRow) {
+        vers['assets/photography/landscape/land_1.jpg'] = publishVer;
         pubLogMsg('→ 提交首页背景');
         await ghCommitFile('assets/photography/landscape/land_1.jpg', bgRow.data, '发布：更新首页背景');
         pubLogMsg('  ✓ 完成');
@@ -1937,7 +2013,7 @@ function imgSlotFallback(img, filename) {
       /* 3. 读取线上清单 */
       const man = (await ghGetJson('assets/uploads/manifest.json')) || { v: 1, items: [] };
       man.items = Array.isArray(man.items) ? man.items : [];
-      /* 4. 新作品提交 */
+      /* 4. 新作品提交（路径唯一，仍带版本号便于统一缓存策略） */
       for (const r of (rows || [])) {
         if (r.section === 'hero-bg' || r.section === META_KEY || r.pub) continue;
         const ext = (r.data && r.data.indexOf('data:image/png') === 0) ? 'png' : 'jpg';
@@ -1949,21 +2025,51 @@ function imgSlotFallback(img, filename) {
         await idbPut(Object.assign({}, r, { pub: 1, pubSrc: path }));
         pubLogMsg('  ✓ 完成');
       }
-      /* 5. 一句话同步 */
+      /* 5. 一句话同步 + 版本号 */
       const metaRow = (rows || []).find(r => r.section === META_KEY);
       if (metaRow) man.meta = metaRow.data;
+      man.ver = publishVer;
+      man.vers = Object.assign({}, man.vers || {}, vers);
       man.updated = new Date().toISOString();
-      pubLogMsg('→ 更新作品清单 manifest.json（' + man.items.length + ' 个作品）');
+      pubLogMsg('→ 更新作品清单 manifest.json（' + man.items.length + ' 个作品，v' + publishVer + '）');
       await ghCommitFile('assets/uploads/manifest.json',
         'data:application/json;base64,' + b64encUtf8(JSON.stringify(man, null, 2)), '发布：更新作品清单');
-      pubLogMsg('\n✅ 全部发布成功！GitHub Pages 约 1 分钟后对所有访客生效。');
-      showToast('✓ 发布成功，约 1 分钟后全站生效');
+      pubLogMsg('✓ 已提交到 GitHub（v' + publishVer + '）');
+      /* 6. 轮询线上部署状态，确认对所有访客生效 */
+      await waitForDeploy(publishVer);
+      showToast('✓ 发布成功，线上已生效');
       refreshPubSummary();
     } catch (e) {
       pubLogMsg('\n✗ 发布中断：' + e.message);
       showToast('✗ 发布失败：' + e.message);
     } finally { btn.disabled = false; }
   });
+
+  /* 轮询线上 manifest，确认 Pages 已部署到目标版本 */
+  async function waitForDeploy(targetVer) {
+    const liveUrl = 'assets/uploads/manifest.json';
+    const startTime = Date.now();
+    const timeout = 110000; // 最长约 110 秒，留余量给用户感知的 2 分钟
+    const interval = 6000;  // 每 6 秒轮询一次
+    pubLogMsg('⏳ 等待 GitHub Pages 部署…（最长约 2 分钟）');
+    while (Date.now() - startTime < timeout) {
+      await new Promise(r => setTimeout(r, interval));
+      const elapsed = Math.round((Date.now() - startTime) / 1000);
+      try {
+        const r = await fetch(liveUrl + '?ts=' + Date.now(), { cache: 'no-store' });
+        if (r.ok) {
+          const man = await r.json().catch(() => null);
+          if (man && man.ver && man.ver >= targetVer) {
+            pubLogMsg('✅ 线上已生效（v' + man.ver + '，耗时 ' + elapsed + 's），所有访客可见');
+            return true;
+          }
+        }
+      } catch (e) { /* 网络抖动忽略，继续轮询 */ }
+      pubLogMsg('⏳ 等待部署中…（' + elapsed + 's）');
+    }
+    pubLogMsg('⚠️ 已超时（' + Math.round(timeout / 1000) + 's），GitHub Pages 仍在构建，通常再等 1 分钟即可对所有访客生效');
+    return false;
+  }
 
   /* ---------- 回到顶部 ---------- */
   document.getElementById('to-top').addEventListener('click', () => scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }));
