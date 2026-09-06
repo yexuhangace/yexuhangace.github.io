@@ -322,6 +322,15 @@ section { padding: 6rem 0 1rem; }
 }
 body.author-mode .upload-btn { display: inline-flex; animation: fadeUp 0.4s var(--ease) both; }
 .upload-btn:hover { background: var(--yellow); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 0 var(--ink); }
+/* 视频上传按钮：独立类，避免被图片上传通用逻辑绑定；作者模式可见 */
+.upload-video-btn {
+  font-size: 0.75rem; font-weight: 800; padding: 5px 12px;
+  border: 2.5px dashed var(--ink); border-radius: 10px; background: var(--bg-soft);
+  transition: all 0.2s;
+  display: none;
+}
+body.author-mode .upload-video-btn { display: inline-flex; animation: fadeUp 0.4s var(--ease) both; }
+.upload-video-btn:hover { background: var(--yellow); transform: translate(-2px,-2px); box-shadow: 3px 3px 0 0 var(--ink); }
 .up-item { position: relative; }
 .up-item img { width: 100%; height: 100%; object-fit: cover; }
 .up-del {
@@ -338,6 +347,7 @@ body.author-mode .upload-btn { display: inline-flex; animation: fadeUp 0.4s var(
    视频
    ============================================================ */
 .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+.video-card { position: relative; }
 .video-card video { width: 100%; aspect-ratio: 16/9; background: #000; display: block; }
 .video-meta { padding: 20px 24px 24px; }
 .video-meta h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 6px; }
@@ -468,20 +478,20 @@ footer { margin-top: 5rem; border-top: 3px solid var(--ink); padding: 36px 0; ba
 }
 body.author-mode .lb-replace { display: inline-block; animation: fadeUp 0.4s var(--ease) both; }
 .lb-replace:hover { background: var(--yellow); transform: translate(-2px,-2px); box-shadow: 4px 4px 0 0 var(--ink); }
-/* 封面图替换按钮（作者模式显示） */
-.cover-edit {
+/* 封面图/视频卡片管理按钮（作者模式显示） */
+.cover-edit, .video-edit {
   position: absolute; top: 10px; right: 10px; z-index: 5;
-  display: none; gap: 6px;
+  display: none; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
 }
-body.author-mode .cover-edit { display: flex; animation: fadeUp 0.4s var(--ease) both; }
-.cover-edit button {
+body.author-mode .cover-edit, body.author-mode .video-edit { display: flex; animation: fadeUp 0.4s var(--ease) both; }
+.cover-edit button, .video-edit button {
   font-family: inherit; font-weight: 800; font-size: 0.72rem;
   padding: 6px 10px; border: 2px solid var(--ink); border-radius: 8px;
   background: var(--yellow); color: var(--ink); cursor: pointer;
   box-shadow: var(--shadow-sm); transition: 0.15s;
 }
-.cover-edit button:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 0 var(--ink); }
-.cover-edit .cover-restore { background: var(--bg); }
+.cover-edit button:hover, .video-edit button:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 0 var(--ink); }
+.cover-edit .cover-restore, .video-edit .ve-restore { background: var(--bg); }
 .rep-qr {
   width: 150px; height: 150px; object-fit: cover; display: block;
   border: 3px solid var(--ink); border-radius: 14px; margin: 2px auto 14px;
@@ -990,6 +1000,9 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
       <div class="eyebrow">MOTION</div>
       <h2>视频<span class="hl">作品</span></h2>
       <p>从 AI 广告到微电影——参与制作的影像内容。</p>
+      <div class="up-toolbar" style="margin-bottom:0;">
+        <button class="upload-video-btn" type="button">＋ 上传视频</button>
+      </div>
     </div>
     <div class="video-grid reveal-group">
       <div class="card video-card reveal">
@@ -1213,6 +1226,20 @@ body.author-mode #pubDot { display: flex; animation: fadeUp 0.4s var(--ease) bot
 <input type="file" id="repInput" hidden accept="image/*">
 <input type="file" id="qrInput" hidden accept="image/*">
 <input type="file" id="coverInput" hidden accept="image/*">
+<input type="file" id="videoInput" hidden accept="video/*">
+<input type="file" id="videoRepInput" hidden accept="video/*">
+
+<!-- 视频改名弹窗（作者模式） -->
+<div class="overlay" id="videoNameMenu">
+  <div class="modal-card">
+    <h3>✏️ 修改视频名称</h3>
+    <input class="meta-input" id="videoNameInput" maxlength="60" placeholder="输入视频名称" autocomplete="off">
+    <div class="modal-actions">
+      <button class="btn-no" id="videoNameCancel">取消</button>
+      <button class="btn-ok" id="videoNameSave">保存</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
@@ -1496,7 +1523,8 @@ function imgSlotFallback(img, filename) {
     if (man && Array.isArray(man.items)) {
       man.items.forEach(it => {
         const src = it.src + (it.src.indexOf('?') >= 0 ? '&' : '?') + 'v=' + (man.ver || '');
-        addUploadCard(it.section, src, it.cap || '作品', null, false, true);
+        if (it.kind === 'video') addVideoCard(src, it.cap || '视频作品', null, false, true);
+        else addUploadCard(it.section, src, it.cap || '作品', null, false, true);
         if (it.id) remoteIds.add(it.id);
       });
       lastManVer = man.ver || 0;
@@ -1505,6 +1533,7 @@ function imgSlotFallback(img, filename) {
     (rows || []).forEach(r => {
       if (r.section === 'hero-bg') { applyHeroBg(r.data); hasLocalBg = true; }
       else if (r.section === META_KEY) { heroMeta.textContent = r.data; hasLocalMeta = true; }
+      else if (r.section === 'videos' && !r.pub) addVideoCard(r.data, r.cap || '视频作品', r.id, false, false);
       else if (!r.pub) addUploadCard(r.section, r.data, r.cap, r.id, false);
       /* r.pub 的本地上传已由线上清单渲染，跳过避免重复 */
     });
@@ -1521,6 +1550,34 @@ function imgSlotFallback(img, filename) {
         if (raw.split('?')[0] === o.src) { im.dataset.origSrc = o.src; im.src = o.data; }
       });
     });
+    /* 本地未发布的视频替换/改名覆盖（优先级最高；改名记录无 data 仅改标题） */
+    (ovs || []).forEach(o => {
+      if (!isVideoPath(o.src)) return;
+      document.querySelectorAll('#videos video').forEach(v => {
+        const base = (v.getAttribute('src') || '').split('?')[0];
+        if (base !== o.src) return;
+        if (o.data) { v.dataset.origSrc = o.src; v.src = o.data; showVideoRestore(v); }
+        if (o.cap) {
+          const card = v.closest('.video-card');
+          const h = card && card.querySelector('.video-meta h3');
+          if (h) h.textContent = o.cap;
+        }
+      });
+    });
+    /* 线上视频改名：仅当本机无对应覆盖（改名/替换）时采用 */
+    if (man && man.videoCaps) {
+      const localVideoKeys = new Set((ovs || []).filter(o => isVideoPath(o.src) && (o.cap || o.data)).map(o => o.src));
+      document.querySelectorAll('#videos video').forEach(v => {
+        const base = (v.getAttribute('src') || '').split('?')[0];
+        if (localVideoKeys.has(base)) return;
+        const c = man.videoCaps[base];
+        if (c) {
+          const card = v.closest('.video-card');
+          const h = card && card.querySelector('.video-meta h3');
+          if (h) h.textContent = c;
+        }
+      });
+    }
     /* 线上已发布的替换图（仅当本机没有对应覆盖时，用版本号 URL 刷新） */
     if (man && man.vers) {
       const localKeys = new Set((ovs || []).map(o => o.src));
@@ -1530,6 +1587,13 @@ function imgSlotFallback(img, filename) {
         if (localKeys.has(base)) return; // 本地覆盖优先
         const v = man.vers[base];
         if (v) { im.dataset.origSrc = base; im.src = base + '?v=' + v; }
+      });
+      /* 视频同理：静态视频被替换发布后，用版本号 URL 刷新（本地覆盖优先） */
+      document.querySelectorAll('#videos video').forEach(vd => {
+        const base = (vd.getAttribute('src') || '').split('?')[0];
+        if (localKeys.has(base)) return;
+        const v = man.vers[base];
+        if (v) { vd.dataset.origSrc = base; vd.src = base + '?v=' + v; }
       });
     }
   }).catch(() => {});
@@ -1561,13 +1625,36 @@ function imgSlotFallback(img, filename) {
           const v = man.vers[base];
           if (v) { im.dataset.origSrc = base; im.src = base + '?v=' + v; }
         });
+        /* 视频同理 */
+        document.querySelectorAll('#videos video').forEach(vd => {
+          const base = (vd.getAttribute('src') || '').split('?')[0];
+          if (localKeys.has(base)) return;
+          const v = man.vers[base];
+          if (v) { vd.dataset.origSrc = base; vd.src = base + '?v=' + v; }
+        });
+      }
+      /* 3.5 视频改名同步：仅本机无对应覆盖时采用 */
+      if (man.videoCaps) {
+        const ovs2 = await ovrAll().catch(() => []);
+        const capKeys = new Set(ovs2.filter(o => isVideoPath(o.src) && (o.cap || o.data)).map(o => o.src));
+        document.querySelectorAll('#videos video').forEach(vd => {
+          const base = (vd.getAttribute('src') || '').split('?')[0];
+          if (capKeys.has(base)) return;
+          const c = man.videoCaps[base];
+          if (c) {
+            const card = vd.closest('.video-card');
+            const h = card && card.querySelector('.video-meta h3');
+            if (h) h.textContent = c;
+          }
+        });
       }
       /* 4. 新增线上作品：补渲染未出现过的 id */
       if (Array.isArray(man.items)) {
         man.items.forEach(it => {
           if (it.id && remoteIds.has(it.id)) return;
           const src = it.src + (it.src.indexOf('?') >= 0 ? '&' : '?') + 'v=' + (man.ver || '');
-          addUploadCard(it.section, src, it.cap || '作品', null, false, true);
+          if (it.kind === 'video') addVideoCard(src, it.cap || '视频作品', null, false, true);
+          else addUploadCard(it.section, src, it.cap || '作品', null, false, true);
           if (it.id) remoteIds.add(it.id);
         });
       }
@@ -1935,6 +2022,177 @@ function imgSlotFallback(img, filename) {
     });
   }).catch(() => {});
 
+  /* ---------- 视频作品独立管理（替换 / 上传 / 改名 / 恢复 · 密码保护 · 与图片互不影响） ---------- */
+  const videoInput = document.getElementById('videoInput');
+  const videoRepInput = document.getElementById('videoRepInput');
+  const videoNameMenu = document.getElementById('videoNameMenu');
+  const videoNameInput = document.getElementById('videoNameInput');
+  let activeVideoEl = null;   /* 当前替换操作的视频元素 */
+  let activeNameVideo = null; /* 当前改名操作的视频元素 */
+  const VIDEO_GRID = document.querySelector('#videos .video-grid');
+  /* 视频 dataURL：直接读文件，不经 canvas 压缩 */
+  function videoToDataURL(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+  /* 视频路径判定（assets/video/ 为静态视频，assets/uploads/videos/ 为已发布上传视频） */
+  function isVideoPath(p) {
+    p = (p || '').split('?')[0];
+    return p.indexOf('assets/video/') === 0 || p.indexOf('assets/uploads/videos/') === 0;
+  }
+  function videoTitleOf(v) {
+    const h = v.closest('.video-card') && v.closest('.video-card').querySelector('.video-meta h3');
+    return h ? h.textContent.trim() : '';
+  }
+  function showVideoRestore(v) {
+    const r = v.closest('.video-card') && v.closest('.video-card').querySelector('.ve-restore');
+    if (r) r.style.display = '';
+  }
+  /* 为视频卡片注入「替换 / 改名 / 恢复」控制按钮（仅作者模式可见） */
+  function setupVideoControls(card) {
+    const v = card.querySelector('video');
+    if (!v || card.querySelector('.video-edit')) return;
+    const edit = document.createElement('div');
+    edit.className = 'video-edit';
+    edit.innerHTML = '<button class="ve-replace" type="button">替换</button>'
+      + '<button class="ve-rename" type="button">改名</button>'
+      + '<button class="ve-restore" type="button" style="display:none">恢复</button>';
+    if (card.dataset.uid) edit.querySelector('.ve-restore').remove(); /* 本地上传无原始版本概念 */
+    card.appendChild(edit);
+    edit.querySelector('.ve-replace').addEventListener('click', e => {
+      e.stopPropagation();
+      requestAuth(() => { activeVideoEl = v; videoRepInput.click(); });
+    });
+    edit.querySelector('.ve-rename').addEventListener('click', e => {
+      e.stopPropagation();
+      requestAuth(() => {
+        activeNameVideo = v;
+        videoNameInput.value = videoTitleOf(v);
+        videoNameMenu.classList.add('show');
+        setTimeout(() => videoNameInput.focus(), 60);
+      });
+    });
+    const rst = edit.querySelector('.ve-restore');
+    if (rst) rst.addEventListener('click', e => {
+      e.stopPropagation();
+      requestAuth(() => restoreVideo(v));
+    });
+  }
+  document.querySelectorAll('.video-card').forEach(setupVideoControls);
+  /* 新增上传视频卡片（本地未发布 / 线上已发布访客可见） */
+  function addVideoCard(src, cap, id, animate, remote) {
+    if (!VIDEO_GRID) return;
+    const card = document.createElement('div');
+    card.className = 'card video-card reveal' + (animate ? ' active' : '');
+    if (id != null && !remote) { card.dataset.uid = id; card.dataset.section = 'videos'; }
+    if (remote) card.dataset.remote = '1';
+    card.innerHTML = '<video controls preload="none" playsinline src="' + src + '"></video>'
+      + '<div class="video-meta"><h3>' + cap + '</h3><p>' + (remote ? '线上 · ' : '上传 · ') + '视频作品</p></div>'
+      + (remote ? '' : '<button class="up-del" title="删除">✕</button>');
+    const del = card.querySelector('.up-del');
+    if (del) del.addEventListener('click', e => {
+      e.stopPropagation();
+      idbDel(id).catch(() => {});
+      card.remove();
+    });
+    VIDEO_GRID.appendChild(card);
+    setupVideoControls(card);
+  }
+  /* 替换视频：本地上传卡更新记录；静态/线上卡写入 ovr 覆盖（key 为原始路径） */
+  videoRepInput.addEventListener('change', async () => {
+    const f = videoRepInput.files[0];
+    videoRepInput.value = '';
+    const v = activeVideoEl;
+    activeVideoEl = null;
+    if (!f || !v) return;
+    showToast('⏳ 正在替换视频…');
+    try {
+      const data = await videoToDataURL(f);
+      const card = v.closest('.video-card');
+      if (card && card.dataset.uid) {
+        const rows = await idbAll().catch(() => []);
+        const rec = (rows || []).find(r => r.id === Number(card.dataset.uid));
+        if (rec) await idbPut(Object.assign({}, rec, { data, pub: 0, pubSrc: null }));
+        v.src = data;
+      } else {
+        const key = (v.dataset.origSrc || v.getAttribute('src') || '').split('?')[0];
+        const ex = ((await ovrAll().catch(() => [])) || []).find(o => o.src === key);
+        await ovrAdd(Object.assign({}, ex || {}, { src: key, data })); /* 保留已有改名 cap */
+        v.dataset.origSrc = key;
+        v.src = data;
+        showVideoRestore(v);
+      }
+      logOp('视频作品', '上传替换', '成功', f.name + ' → ' + videoTitleOf(v));
+      showToast('✓ 视频已替换');
+    } catch (err) { logOp('视频作品', '上传替换', '失败', f && f.name); showToast('✗ 视频替换失败，请重试'); }
+  });
+  /* 恢复原视频（撤销替换，同时清除本地改名） */
+  async function restoreVideo(v) {
+    const key = v.dataset.origSrc;
+    if (!key) { showToast('当前已是原始视频'); return; }
+    try {
+      await ovrDel(key);
+      delete v.dataset.origSrc;
+      v.src = key;
+      const r = v.closest('.video-card') && v.closest('.video-card').querySelector('.ve-restore');
+      if (r) r.style.display = 'none';
+      logOp('视频作品', '恢复原视频', '成功', key);
+      showToast('✓ 已恢复原视频');
+    } catch (e) { logOp('视频作品', '恢复原视频', '失败', key); showToast('✗ 恢复失败'); }
+  }
+  /* 保存视频名称（本地上传卡改记录 cap；静态/线上卡写 ovr 覆盖 cap） */
+  document.getElementById('videoNameCancel').addEventListener('click', () => { videoNameMenu.classList.remove('show'); activeNameVideo = null; });
+  videoNameMenu.addEventListener('click', e => { if (e.target === videoNameMenu) { videoNameMenu.classList.remove('show'); activeNameVideo = null; } });
+  document.getElementById('videoNameSave').addEventListener('click', async () => {
+    const name = videoNameInput.value.trim();
+    if (!name) { showToast('✗ 名称不能为空'); return; }
+    const v = activeNameVideo;
+    activeNameVideo = null;
+    videoNameMenu.classList.remove('show');
+    if (!v) return;
+    const card = v.closest('.video-card');
+    const h = card && card.querySelector('.video-meta h3');
+    try {
+      if (card && card.dataset.uid) {
+        const rows = await idbAll().catch(() => []);
+        const rec = (rows || []).find(r => r.id === Number(card.dataset.uid));
+        if (rec) await idbPut(Object.assign({}, rec, { cap: name }));
+      } else {
+        const key = (v.dataset.origSrc || v.getAttribute('src') || '').split('?')[0];
+        const ex = ((await ovrAll().catch(() => [])) || []).find(o => o.src === key);
+        await ovrAdd(Object.assign({}, ex || {}, { src: key, cap: name })); /* 保留已有替换 data */
+      }
+      if (h) h.textContent = name;
+      logOp('视频作品', '修改名称', '成功', name);
+      showToast('✓ 名称已更新');
+    } catch (e) { logOp('视频作品', '修改名称', '失败', name); showToast('✗ 修改失败，请重试'); }
+  });
+  /* 上传新视频（多选 · IndexedDB 持久化 · section=videos） */
+  const videoUploadBtn = document.querySelector('.upload-video-btn');
+  if (videoUploadBtn) {
+    videoUploadBtn.addEventListener('click', () => requestAuth(() => videoInput.click()));
+    videoInput.addEventListener('change', async () => {
+      for (const f of videoInput.files) {
+        const name = f.name.replace(/\.[^.]+$/, '');
+        try {
+          const data = await videoToDataURL(f);
+          const id = await idbAdd({ section: 'videos', data, cap: name, kind: 'video' });
+          addVideoCard(data, name, id, true, false);
+          logOp('视频上传', '新增视频', '成功', f.name);
+          showToast('✓ 视频已添加，发布后对所有访客生效');
+        } catch (e) {
+          logOp('视频上传', '新增视频', '失败', f.name);
+          showToast('✗ 视频添加失败，请重试');
+        }
+      }
+      videoInput.value = '';
+    });
+  }
+
   /* ---------- Hero 一句话编辑（点击 → 密码 → 自定义内容） ---------- */
   const metaMenu = document.getElementById('metaMenu');
   const metaInput = document.getElementById('metaInput');
@@ -2022,13 +2280,18 @@ function imgSlotFallback(img, filename) {
   /* 统计待发布内容 */
   async function refreshPubSummary() {
     const [rows, ovs] = await Promise.all([idbAll(), ovrAll()]);
-    const repl = (ovs || []).length;
-    const news = (rows || []).filter(r => r.section !== 'hero-bg' && r.section !== META_KEY && !r.pub).length;
+    const repl = (ovs || []).filter(o => !isVideoPath(o.src)).length;
+    const vidOvr = (ovs || []).filter(o => isVideoPath(o.src)).length;
+    const news = (rows || []).filter(r => r.section !== 'hero-bg' && r.section !== META_KEY && r.section !== 'videos' && !r.pub).length;
+    const vidNews = (rows || []).filter(r => r.section === 'videos' && !r.pub).length;
     const bg = (rows || []).some(r => r.section === 'hero-bg');
     const meta = (rows || []).some(r => r.section === META_KEY);
     document.getElementById('pubSummary').innerHTML =
       '待发布：<b>' + repl + '</b> 张替换图片' + (bg ? '、<b>1</b> 张首页背景' : '')
-      + '、<b>' + news + '</b> 个新作品' + (meta ? '、<b>1</b> 条一句话' : '');
+      + '、<b>' + news + '</b> 个新作品'
+      + (vidNews ? '、<b>' + vidNews + '</b> 个新视频' : '')
+      + (vidOvr ? '、<b>' + vidOvr + '</b> 项视频更新' : '')
+      + (meta ? '、<b>1</b> 条一句话' : '');
   }
   pubDot.addEventListener('click', () => requestAuth(() => {
     pubLogEl.textContent = '';
@@ -2076,8 +2339,9 @@ function imgSlotFallback(img, filename) {
     try {
       const [rows, ovs] = await Promise.all([idbAll(), ovrAll()]);
       const vers = {}; // 文件级版本映射：同路径覆盖用 ?v=vers[p] 破缓存
-      /* 1. 替换类图片（二维码 / 静态图覆盖） */
+      /* 1. 替换类图片（二维码 / 静态图覆盖）· 视频覆盖单独在 2.5 处理，互不影响 */
       for (const o of (ovs || [])) {
+        if (isVideoPath(o.src)) continue;
         const p = normRepoPath(o.src);
         vers[p] = publishVer;
         pubLogMsg('→ 提交替换图片 ' + p);
@@ -2092,26 +2356,44 @@ function imgSlotFallback(img, filename) {
         await ghCommitFile('assets/photography/landscape/land_1.jpg', bgRow.data, '发布：更新首页背景');
         pubLogMsg('  ✓ 完成');
       }
+      /* 2.5 视频替换 / 改名（静态视频与已发布上传视频的同路径覆盖） */
+      const videoRenameMap = {};
+      for (const o of (ovs || [])) {
+        if (!isVideoPath(o.src)) continue;
+        const p = normRepoPath(o.src);
+        if (o.data) {
+          vers[p] = publishVer;
+          pubLogMsg('→ 提交替换视频 ' + p);
+          await ghCommitFile(p, o.data, '发布：替换视频 ' + p);
+          pubLogMsg('  ✓ 完成');
+        }
+        if (o.cap) videoRenameMap[p] = o.cap;
+      }
       /* 3. 读取线上清单 */
       const man = (await ghGetJson('assets/uploads/manifest.json')) || { v: 1, items: [] };
       man.items = Array.isArray(man.items) ? man.items : [];
-      /* 4. 新作品提交（路径唯一，仍带版本号便于统一缓存策略） */
+      /* 4. 新作品 / 新视频提交（路径唯一，仍带版本号便于统一缓存策略） */
       for (const r of (rows || [])) {
         if (r.section === 'hero-bg' || r.section === META_KEY || r.pub) continue;
-        const ext = (r.data && r.data.indexOf('data:image/png') === 0) ? 'png' : 'jpg';
+        const isVid = r.section === 'videos';
+        let ext = (r.data && r.data.indexOf('data:image/png') === 0) ? 'png' : 'jpg';
+        if (isVid) ext = (r.data && r.data.indexOf('data:video/webm') === 0) ? 'webm' : 'mp4';
         const fname = 'u' + Date.now() + Math.floor(Math.random() * 1000);
         const path = 'assets/uploads/' + r.section + '/' + fname + '.' + ext;
-        pubLogMsg('→ 提交新作品 ' + path);
-        await ghCommitFile(path, r.data, '发布：新作品 ' + (r.cap || r.section));
-        man.items.push({ id: fname, section: r.section, src: path, cap: r.cap || '上传作品' });
+        pubLogMsg('→ 提交' + (isVid ? '新视频' : '新作品') + ' ' + path);
+        await ghCommitFile(path, r.data, '发布：' + (isVid ? '新视频 ' : '新作品 ') + (r.cap || r.section));
+        const item = { id: fname, section: r.section, src: path, cap: r.cap || (isVid ? '视频作品' : '上传作品') };
+        if (isVid) item.kind = 'video';
+        man.items.push(item);
         await idbPut(Object.assign({}, r, { pub: 1, pubSrc: path }));
         pubLogMsg('  ✓ 完成');
       }
-      /* 5. 一句话同步 + 版本号 */
+      /* 5. 一句话同步 + 版本号 + 视频改名映射 */
       const metaRow = (rows || []).find(r => r.section === META_KEY);
       if (metaRow) man.meta = metaRow.data;
       man.ver = publishVer;
       man.vers = Object.assign({}, man.vers || {}, vers);
+      if (Object.keys(videoRenameMap).length) man.videoCaps = Object.assign({}, man.videoCaps || {}, videoRenameMap);
       man.updated = new Date().toISOString();
       pubLogMsg('→ 更新作品清单 manifest.json（' + man.items.length + ' 个作品，v' + publishVer + '）');
       await ghCommitFile('assets/uploads/manifest.json',
