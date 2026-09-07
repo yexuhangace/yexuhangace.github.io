@@ -18,10 +18,34 @@
       "section": "graphic",
       "src": "assets/uploads/graphic/u1788681950523157.jpg",
       "cap": "板绘作品.jpg"
+    },
+    {
+      "id": "u1788774088708574",
+      "section": "brand",
+      "src": "assets/uploads/brand/u1788774088708574.png",
+      "cap": "Delivery_Van_Mockup_3.png"
+    },
+    {
+      "id": "u178877409333414",
+      "section": "brand",
+      "src": "assets/uploads/brand/u178877409333414.jpg",
+      "cap": "巴士.jpg"
+    },
+    {
+      "id": "u1788774096525309",
+      "section": "brand",
+      "src": "assets/uploads/brand/u1788774096525309.jpg",
+      "cap": "地铁.jpg"
+    },
+    {
+      "id": "u1788774100000830",
+      "section": "brand",
+      "src": "assets/uploads/brand/u1788774100000830.jpg",
+      "cap": "飞机场广告.jpg"
     }
   ],
   "meta": "求职意向 · 实习生 ｜ 坐标 · 广东东莞 ｜ PS · CDR · PR · AIGC",
-  "ver": 1788700377305,
+  "ver": 1788774087421,
   "vers": {
     "assets/wechat_qr.png": 1788696709640,
     "assets/photography/landscape/land_1.jpg": 1788696709640,
@@ -31,5 +55,5 @@
     "assets/brand/brand_ip_turnaround.png": 1788696709640,
     "assets/video/video_daan.mp4": 1788696709640
   },
-  "updated": "2026-09-06T13:12:57.789Z"
+  "updated": "2026-09-07T09:41:43.212Z"
 }
