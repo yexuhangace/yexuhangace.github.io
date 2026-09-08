@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "ver": 1788861408231,
+  "ver": 1788861821046,
   "items": [
     {
       "id": "u1788695713533279",
@@ -28,12 +28,27 @@
       "src": "resume-uploads/brand/u1788861256672395.jpg",
       "cap": "飞机场广告.jpg",
       "kind": "image"
+    },
+    {
+      "id": "u1788861835916705",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788861835916705.jpg",
+      "cap": "logo.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788861838528802",
+      "section": "graphic",
+      "src": "resume-uploads/graphic/u1788861838528802.jpg",
+      "cap": "小黄人2.jpg",
+      "kind": "image"
     }
   ],
   "ovr": {
-    "assets/brand/brand_ip_turnaround.png": "resume-uploads/replaced/r1788861408231927.png"
+    "assets/brand/brand_ip_turnaround.png": "resume-uploads/replaced/r1788861821046176.png",
+    "assets/brand/brand_stickers.png": "resume-uploads/replaced/r1788861829668367.png"
   },
   "bg": null,
-  "updated": "2026-09-08T09:56:55.572Z",
+  "updated": "2026-09-08T10:04:01.548Z",
   "titles": {}
 }
