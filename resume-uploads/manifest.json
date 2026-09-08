@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "ver": 1788861821046,
+  "ver": 1788871158587,
   "items": [
     {
       "id": "u1788695713533279",
@@ -42,6 +42,20 @@
       "src": "resume-uploads/graphic/u1788861838528802.jpg",
       "cap": "小黄人2.jpg",
       "kind": "image"
+    },
+    {
+      "id": "u1788871160044918",
+      "section": "graphic",
+      "src": "resume-uploads/graphic/u1788871160044918.jpg",
+      "cap": "ai生图作品1.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788871164973734",
+      "section": "graphic",
+      "src": "resume-uploads/graphic/u1788871164973734.jpg",
+      "cap": "ai生图作品2.jpg",
+      "kind": "image"
     }
   ],
   "ovr": {
@@ -49,6 +63,6 @@
     "assets/brand/brand_stickers.png": "resume-uploads/replaced/r1788861829668367.png"
   },
   "bg": null,
-  "updated": "2026-09-08T10:04:01.548Z",
+  "updated": "2026-09-08T12:39:29.320Z",
   "titles": {}
 }
