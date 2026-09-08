@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "ver": 1788871158587,
+  "ver": 1788872994523,
   "items": [
     {
       "id": "u1788695713533279",
@@ -62,7 +62,7 @@
     "assets/brand/brand_ip_turnaround.png": "resume-uploads/replaced/r1788861821046176.png",
     "assets/brand/brand_stickers.png": "resume-uploads/replaced/r1788861829668367.png"
   },
-  "bg": null,
-  "updated": "2026-09-08T12:39:29.320Z",
+  "bg": "resume-uploads/hero-bg.mp4",
+  "updated": "2026-09-08T13:10:06.896Z",
   "titles": {}
 }
