@@ -1,1 +1,69 @@
-{"v":1,"ver":1788956096246,"items":[{"id":"u1788695713533279","section":"product","src":"resume-uploads/product/u1788695713533279.jpg","cap":"微信图片_20251016174318_49_94.jpg"},{"id":"u1788861250873600","section":"brand","src":"resume-uploads/brand/u1788861250873600.jpg","cap":"巴士.jpg","kind":"image"},{"id":"u1788861253918869","section":"brand","src":"resume-uploads/brand/u1788861253918869.jpg","cap":"地铁.jpg","kind":"image"},{"id":"u1788861256672395","section":"brand","src":"resume-uploads/brand/u1788861256672395.jpg","cap":"飞机场广告.jpg","kind":"image"},{"id":"u1788861835916705","section":"brand","src":"resume-uploads/brand/u1788861835916705.jpg","cap":"logo.jpg","kind":"image"},{"id":"u1788861838528802","section":"graphic","src":"resume-uploads/graphic/u1788861838528802.jpg","cap":"小黄人2.jpg","kind":"image"},{"id":"u1788871160044918","section":"graphic","src":"resume-uploads/graphic/u1788871160044918.jpg","cap":"ai生图作品1.jpg","kind":"image"},{"id":"u1788871164973734","section":"graphic","src":"resume-uploads/graphic/u1788871164973734.jpg","cap":"ai生图作品2.jpg","kind":"image"}],"ovr":{"assets/brand/brand_ip_turnaround.png":"resume-uploads/replaced/r1788861821046176.png","assets/brand/brand_stickers.png":"resume-uploads/replaced/r1788861829668367.png","assets/video/video_daan.mp4":"resume-uploads/replaced/r20260909121439.mp4"},"bg":"resume-uploads/hero-bg.mp4","updated":"2026-09-09T04:14:56.306Z","titles":{}}
+{
+  "v": 1,
+  "ver": 1788928548509,
+  "items": [
+    {
+      "id": "u1788695713533279",
+      "section": "product",
+      "src": "resume-uploads/product/u1788695713533279.jpg",
+      "cap": "微信图片_20251016174318_49_94.jpg"
+    },
+    {
+      "id": "u1788861250873600",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788861250873600.jpg",
+      "cap": "巴士.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788861253918869",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788861253918869.jpg",
+      "cap": "地铁.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788861256672395",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788861256672395.jpg",
+      "cap": "飞机场广告.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788861835916705",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788861835916705.jpg",
+      "cap": "logo.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788861838528802",
+      "section": "graphic",
+      "src": "resume-uploads/graphic/u1788861838528802.jpg",
+      "cap": "小黄人2.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788871160044918",
+      "section": "graphic",
+      "src": "resume-uploads/graphic/u1788871160044918.jpg",
+      "cap": "ai生图作品1.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788871164973734",
+      "section": "graphic",
+      "src": "resume-uploads/graphic/u1788871164973734.jpg",
+      "cap": "ai生图作品2.jpg",
+      "kind": "image"
+    }
+  ],
+  "ovr": {
+    "assets/brand/brand_ip_turnaround.png": "resume-uploads/replaced/r1788928548509848.png",
+    "assets/brand/brand_stickers.png": "resume-uploads/replaced/r1788861829668367.png",
+    "assets/video/video_daan.mp4": "resume-uploads/replaced/r20260909121439.mp4"
+  },
+  "bg": "resume-uploads/hero-bg.mp4",
+  "updated": "2026-09-09T04:35:59.658Z",
+  "titles": {}
+}
