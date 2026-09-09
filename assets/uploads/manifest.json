@@ -42,10 +42,46 @@
       "section": "brand",
       "src": "assets/uploads/brand/u1788774100000830.jpg",
       "cap": "飞机场广告.jpg"
+    },
+    {
+      "id": "u1788949774595138",
+      "section": "brand",
+      "src": "assets/uploads/brand/u1788949774595138.jpg",
+      "cap": "00_MainKV_16x9.jpg"
+    },
+    {
+      "id": "u1788949777616998",
+      "section": "brand",
+      "src": "assets/uploads/brand/u1788949777616998.jpg",
+      "cap": "04_Santorini.jpg"
+    },
+    {
+      "id": "u1788949780753813",
+      "section": "brand",
+      "src": "assets/uploads/brand/u1788949780753813.jpg",
+      "cap": "06_Iceland.jpg"
+    },
+    {
+      "id": "u1788949783170934",
+      "section": "brand",
+      "src": "assets/uploads/brand/u1788949783170934.jpg",
+      "cap": "07_Maldives.jpg"
+    },
+    {
+      "id": "u1788949786124785",
+      "section": "graphic",
+      "src": "assets/uploads/graphic/u1788949786124785.jpg",
+      "cap": "ai生图作品1.jpg"
+    },
+    {
+      "id": "u1788949789084359",
+      "section": "graphic",
+      "src": "assets/uploads/graphic/u1788949789084359.jpg",
+      "cap": "ai生图作品2.jpg"
     }
   ],
   "meta": "求职意向 · 实习生 ｜ 坐标 · 广东东莞 ｜ PS · CDR · PR · AIGC",
-  "ver": 1788774087421,
+  "ver": 1788949773816,
   "vers": {
     "assets/wechat_qr.png": 1788696709640,
     "assets/photography/landscape/land_1.jpg": 1788696709640,
@@ -55,5 +91,5 @@
     "assets/brand/brand_ip_turnaround.png": 1788696709640,
     "assets/video/video_daan.mp4": 1788696709640
   },
-  "updated": "2026-09-07T09:41:43.212Z"
+  "updated": "2026-09-09T10:29:51.818Z"
 }
