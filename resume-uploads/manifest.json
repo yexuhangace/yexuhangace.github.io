@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "ver": 1788928702757,
+  "ver": 1788946426070,
   "items": [
     {
       "id": "u1788695713533279",
@@ -56,6 +56,41 @@
       "src": "resume-uploads/graphic/u1788871164973734.jpg",
       "cap": "ai生图作品2.jpg",
       "kind": "image"
+    },
+    {
+      "id": "u1788946426854477",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788946426854477.jpg",
+      "cap": "00_MainKV_16x9.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788946430033551",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788946430033551.jpg",
+      "cap": "01_Hallstatt.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788946433167782",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788946433167782.jpg",
+      "cap": "04_Santorini.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788946435997936",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788946435997936.jpg",
+      "cap": "06_Iceland.jpg",
+      "kind": "image"
+    },
+    {
+      "id": "u1788946439035495",
+      "section": "brand",
+      "src": "resume-uploads/brand/u1788946439035495.jpg",
+      "cap": "07_Maldives.jpg",
+      "kind": "image"
     }
   ],
   "ovr": {
@@ -64,6 +99,6 @@
     "assets/video/video_daan.mp4": "resume-uploads/replaced/r20260909121439.mp4"
   },
   "bg": "resume-uploads/hero-bg.mp4",
-  "updated": "2026-09-09T04:38:30.900Z",
+  "updated": "2026-09-09T09:34:01.983Z",
   "titles": {}
 }
