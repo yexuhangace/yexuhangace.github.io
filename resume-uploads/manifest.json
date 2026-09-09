@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "ver": 1788946426070,
+  "ver": 1788948710061,
   "items": [
     {
       "id": "u1788695713533279",
@@ -58,37 +58,37 @@
       "kind": "image"
     },
     {
-      "id": "u1788946426854477",
+      "id": "u1788948711991119",
       "section": "brand",
-      "src": "resume-uploads/brand/u1788946426854477.jpg",
+      "src": "resume-uploads/brand/u1788948711991119.jpg",
       "cap": "00_MainKV_16x9.jpg",
       "kind": "image"
     },
     {
-      "id": "u1788946430033551",
+      "id": "u1788948716674860",
       "section": "brand",
-      "src": "resume-uploads/brand/u1788946430033551.jpg",
+      "src": "resume-uploads/brand/u1788948716674860.jpg",
       "cap": "01_Hallstatt.jpg",
       "kind": "image"
     },
     {
-      "id": "u1788946433167782",
+      "id": "u1788948721219815",
       "section": "brand",
-      "src": "resume-uploads/brand/u1788946433167782.jpg",
+      "src": "resume-uploads/brand/u1788948721219815.jpg",
       "cap": "04_Santorini.jpg",
       "kind": "image"
     },
     {
-      "id": "u1788946435997936",
+      "id": "u1788948725355445",
       "section": "brand",
-      "src": "resume-uploads/brand/u1788946435997936.jpg",
+      "src": "resume-uploads/brand/u1788948725355445.jpg",
       "cap": "06_Iceland.jpg",
       "kind": "image"
     },
     {
-      "id": "u1788946439035495",
+      "id": "u178894872912756",
       "section": "brand",
-      "src": "resume-uploads/brand/u1788946439035495.jpg",
+      "src": "resume-uploads/brand/u178894872912756.jpg",
       "cap": "07_Maldives.jpg",
       "kind": "image"
     }
@@ -99,6 +99,7 @@
     "assets/video/video_daan.mp4": "resume-uploads/replaced/r20260909121439.mp4"
   },
   "bg": "resume-uploads/hero-bg.mp4",
-  "updated": "2026-09-09T09:34:01.983Z",
-  "titles": {}
+  "updated": "2026-09-09T10:12:13.636Z",
+  "titles": {},
+  "hidden": []
 }
