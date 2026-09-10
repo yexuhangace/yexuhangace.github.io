@@ -1,14 +1,14 @@
 1:"$Sreact.fragment"
-2:I[8671,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/135oz.ypdvs69.js"],"AuthorProvider"]
-3:I[84998,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/135oz.ypdvs69.js"],"Navigation"]
-4:I[46331,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/135oz.ypdvs69.js"],"HeroSection"]
-5:I[85889,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/135oz.ypdvs69.js"],"FeaturesSection"]
-6:I[76054,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/135oz.ypdvs69.js"],"PortfolioSection"]
-7:I[749,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/135oz.ypdvs69.js"],"HowItWorksSection"]
-8:I[17851,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/135oz.ypdvs69.js"],"TestimonialsSection"]
-9:I[52975,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/135oz.ypdvs69.js"],"FooterSection"]
-a:I[72782,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/135oz.ypdvs69.js"],"AuthorLayer"]
+2:I[8671,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/0012q3k47u2b..js"],"AuthorProvider"]
+3:I[84998,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/0012q3k47u2b..js"],"Navigation"]
+4:I[46331,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/0012q3k47u2b..js"],"HeroSection"]
+5:I[85889,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/0012q3k47u2b..js"],"FeaturesSection"]
+6:I[76054,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/0012q3k47u2b..js"],"PortfolioSection"]
+7:I[749,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/0012q3k47u2b..js"],"HowItWorksSection"]
+8:I[17851,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/0012q3k47u2b..js"],"TestimonialsSection"]
+9:I[52975,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/0012q3k47u2b..js"],"FooterSection"]
+a:I[72782,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js","/portfolio/_next/static/chunks/0012q3k47u2b..js"],"AuthorLayer"]
 b:I[97367,["/portfolio/_next/static/chunks/0dbhjjzl8qfwv.js"],"OutletBoundary"]
 c:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"children":[["$","main",null,{"className":"relative min-h-screen overflow-x-hidden","children":[["$","$L3",null,{}],["$","$L4",null,{}],["$","div",null,{"className":"cv-auto","children":["$","$L5",null,{}]}],["$","div",null,{"className":"cv-auto","children":["$","$L6",null,{}]}],["$","div",null,{"className":"cv-auto","children":["$","$L7",null,{}]}],["$","div",null,{"className":"cv-auto","children":["$","$L8",null,{}]}],["$","div",null,{"className":"cv-auto","children":["$","$L9",null,{}]}]]}],["$","$La",null,{}]]}],[["$","script","script-0",{"src":"/portfolio/_next/static/chunks/135oz.ypdvs69.js","async":true}]],["$","$Lb",null,{"children":["$","$c",null,{"name":"Next.MetadataOutlet","children":"$@d"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"tM7K3KweyJopFc1SwXVJr"}
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"children":[["$","main",null,{"className":"relative min-h-screen overflow-x-hidden","children":[["$","$L3",null,{}],["$","$L4",null,{}],["$","div",null,{"className":"cv-auto","children":["$","$L5",null,{}]}],["$","div",null,{"className":"cv-auto","children":["$","$L6",null,{}]}],["$","div",null,{"className":"cv-auto","children":["$","$L7",null,{}]}],["$","div",null,{"className":"cv-auto","children":["$","$L8",null,{}]}],["$","div",null,{"className":"cv-auto","children":["$","$L9",null,{}]}]]}],["$","$La",null,{}]]}],[["$","script","script-0",{"src":"/portfolio/_next/static/chunks/0012q3k47u2b..js","async":true}]],["$","$Lb",null,{"children":["$","$c",null,{"name":"Next.MetadataOutlet","children":"$@d"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"3iiuWJWyXIqztUfGRtTys"}
 d:null
