@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "ver": 1789030826964,
+  "ver": 1789803237663,
   "items": [
     {
       "id": "u1788695713533279",
@@ -91,6 +91,13 @@
       "src": "resume-uploads/brand/u178894872912756.jpg",
       "cap": "07_Maldives.jpg",
       "kind": "image"
+    },
+    {
+      "id": "u1789803238373107",
+      "section": "product",
+      "src": "resume-uploads/product/u1789803238373107.jpg",
+      "cap": "微信图片_20251016174318_49_94.jpg",
+      "kind": "image"
     }
   ],
   "ovr": {
@@ -99,7 +106,7 @@
     "assets/video/video_daan.mp4": "resume-uploads/replaced/r20260909121439.mp4"
   },
   "bg": "resume-uploads/hero-bg.mp4",
-  "updated": "2026-09-10T09:01:10.947Z",
+  "updated": "2026-09-19T07:34:01.583Z",
   "titles": {},
   "hidden": []
 }
