@@ -1,0 +1,445 @@
+/* =============================================================
+   Tweak Layer · 区块调整（配合 tweak.js 使用）
+   1. 画廊区块 flex 重排（AI 区置顶 / 平面作品前移 / 黄浦隐藏）
+   2. 跑马灯：摄影=统一4:3；平面=限高完整显示（自然比例）
+   3. 查看/展开=区域化作品弹窗（品牌「查看品牌作品」、摄影「展开全部」均按区域隔离罗列，不原位展开）
+   4. 封面卡与图块更小巧、区块间距加大
+   移除 index.html 中的引用即可完整还原
+   ============================================================= */
+
+/* ---------- 画廊区块纵向 flex（配合 JS 写入 order） ---------- */
+#portfolio-works {
+  display: flex;
+  flex-direction: column;
+}
+/* 区块间距加大（原 mt-28=7rem → 9rem） */
+#portfolio-works > .mt-28 {
+  margin-top: 9rem !important;
+}
+@media (max-width: 768px) {
+  #portfolio-works > .mt-28 {
+    margin-top: 5rem !important;
+  }
+}
+
+/* ---------- 摄影封面卡：更小一些 ---------- */
+#portfolio-works .space-y-4 .border > button {
+  height: 200px !important;
+}
+
+/* ---------- 跑马灯 ---------- */
+.mq {
+  overflow: hidden !important;
+  padding-inline: 12px;
+  /* 性能：布局/绘制隔离，跑马灯重绘不扩散到整页（减少滚动卡顿） */
+  contain: layout paint;
+}
+.mq-track {
+  display: flex !important;
+  width: max-content !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  animation: tweakMq var(--mq-dur, 55s) linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+.mq-track > * {
+  flex: 0 0 auto !important;
+  margin-right: 8px !important;
+}
+.mq[data-dir="r"] .mq-track {
+  animation-direction: reverse;
+}
+.mq:hover .mq-track {
+  animation-play-state: paused;
+}
+@keyframes tweakMq {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+#graphic-mq .mq + .mq,
+#brand-mq .mq + .mq {
+  margin-top: 16px;
+}
+
+/* 摄影图块：统一 4:3 裁切填满 */
+.mq-track > figure.p-tile {
+  width: clamp(200px, 19vw, 300px) !important;
+  aspect-ratio: 4 / 3;
+}
+/* 平面图块：限高完整显示（保留不同比例，不裁切）
+   选择器带 ID 提升特异性，压过全局 cover 规则；
+   aspect-ratio:auto 抵消原生 aspect 类，消除图块黑边 */
+#portfolio-works .mq-track > figure.g-tile {
+  width: auto !important;
+  height: 280px;
+  aspect-ratio: auto !important;
+}
+#portfolio-works .mq-track > figure.g-tile img {
+  height: 100% !important;
+  width: auto !important;
+  max-width: none !important;
+  object-fit: contain !important;
+  background: transparent !important;
+}
+
+/* ---------- 非跑马灯图片：统一 cover，杜绝黑边 ---------- */
+#portfolio-works figure {
+  overflow: hidden;
+}
+#portfolio-works figure img {
+  object-fit: cover !important;
+}
+#portfolio-works .grid > figure {
+  aspect-ratio: 4 / 3;
+}
+/* 成套海报与 AI 生图保持 3:4 竖版 */
+#portfolio-works figure:has(img[src*="jingtian_poster"]),
+#portfolio-works figure:has(img[src*="nestea_poster"]),
+#portfolio-works figure.ai-fig {
+  aspect-ratio: 3 / 4;
+}
+/* AI 区跑马灯：tile 限高完整显示（不裁切、比例协调） */
+#portfolio-works .mq-track > figure.a-tile {
+  width: auto !important;
+  height: 300px;
+  aspect-ratio: auto !important;
+}
+#portfolio-works .mq-track > figure.a-tile img {
+  height: 100% !important;
+  width: auto !important;
+  max-width: none !important;
+  object-fit: contain !important;
+  background: transparent !important;
+}
+/* 成套海报板块：双列缩窄居中（grid 本身即 [data-tweak="posters"] 节点，
+   标题区与网格是兄弟节点，选择器须用复合形式匹配网格自身；
+   纵向 flex 容器中 auto margin 会让 max-width 收缩为 fit-content，
+   必须用显式 width 定宽；移动端恢复全宽） */
+#portfolio-works > [data-tweak="posters"].grid {
+  width: min(760px, 82%);
+  margin-inline: auto !important;
+}
+@media (max-width: 768px) {
+  #portfolio-works > [data-tweak="posters"].grid {
+    width: 100%;
+  }
+}
+.ai-fig {
+  cursor: zoom-in;
+}
+
+/* ---------- 工具类 ---------- */
+.tweak-hide {
+  display: none !important;
+}
+
+/* ---------- 查看区域作品：弹窗罗列 ---------- */
+.tweak-modal-grid {
+  columns: 2;
+  column-gap: 14px;
+}
+.tweak-modal-grid figure {
+  position: relative;
+  break-inside: avoid;
+  margin: 0 0 14px !important;
+  aspect-ratio: auto !important;
+  cursor: zoom-in;
+}
+.tweak-modal-grid figure img {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+  background: transparent !important;
+}
+.tweak-modal-grid figure figcaption {
+  position: static !important;
+  opacity: 1 !important;
+  transform: none !important;
+  padding: 6px 0 0 !important;
+}
+@media (max-width: 768px) {
+  .tweak-modal-grid {
+    columns: 1;
+  }
+}
+
+/* ---------- 区域化作品弹窗：桌面居中卡片 / 移动端全屏 ---------- */
+.tweak-modal {
+  animation: twFadeIn 0.25s ease;
+}
+.tweak-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(800px, 92vw);
+  height: min(600px, 86vh);
+  background: #0b0b10;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  animation: twPopIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes twFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes twPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.tweak-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px clamp(16px, 3vw, 32px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex: 0 0 auto;
+}
+.tweak-panel-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.tweak-panel-count {
+  font: 12px/1.6 ui-monospace, SFMono-Regular, monospace;
+  color: #eca8d6;
+  letter-spacing: 0.08em;
+}
+.tweak-panel-close {
+  font: 12px/1.6 ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.08em;
+  color: #eca8d6;
+  background: none;
+  border: 1px solid rgba(236, 168, 214, 0.35);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+.tweak-panel-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(16px, 3vw, 32px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(236, 168, 214, 0.4) transparent;
+}
+.tweak-panel-body::-webkit-scrollbar {
+  width: 8px;
+}
+.tweak-panel-body::-webkit-scrollbar-thumb {
+  background: rgba(236, 168, 214, 0.35);
+  border-radius: 8px;
+}
+.tweak-group {
+  margin-bottom: clamp(24px, 4vw, 44px);
+}
+.tweak-group-title {
+  font: 600 13px/1.6 ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.12em;
+  color: #eca8d6;
+  margin: 0 0 14px;
+}
+
+/* 骨架屏：加载前占位微光，图载入后淡入 */
+.tweak-modal-grid figure {
+  min-height: 160px;
+}
+.tweak-modal-grid figure.tw-loaded {
+  min-height: 0;
+}
+.tweak-skel {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.05) 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 70%
+  );
+  background-size: 200% 100%;
+  animation: twShimmer 1.4s linear infinite;
+}
+.tweak-modal-grid figure img {
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+.tweak-modal-grid figure.tw-loaded img {
+  opacity: 1;
+}
+.tweak-modal-grid figure.tw-loaded .tweak-skel {
+  display: none;
+}
+@keyframes twShimmer {
+  from {
+    background-position: 180% 0;
+  }
+  to {
+    background-position: -80% 0;
+  }
+}
+@media (max-width: 768px) {
+  .tweak-modal {
+    padding: 0 !important;
+  }
+  .tweak-panel {
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    border: 0;
+  }
+}
+
+/* 跑马灯静态行：内容不足一行时停用动画并隐藏副本（防同屏重复）；
+   副本节点常驻（mq-dup），图片加载变宽后可随时恢复无缝循环 */
+.mq-static .mq-track {
+  animation: none !important;
+}
+.mq-static .mq-track > .mq-dup {
+  display: none !important;
+}
+
+/* ---------- 首页六个项目卡：改竖排窄条板块，占比收小（≥1024px） ---------- */
+@media (min-width: 1024px) {
+  div.grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3.mt-16:has(> button) {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 3rem;
+  }
+  div.grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3.mt-16:has(> button) > * {
+    min-height: 0;
+    padding: 22px 16px;
+  }
+  div.grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3.mt-16:has(> button) .mb-5 {
+    margin-bottom: 12px;
+  }
+  div.grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3.mt-16:has(> button) h3 {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  div.grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3.mt-16:has(> button) p {
+    font-size: 12px;
+    line-height: 1.65;
+  }
+  div.grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3.mt-16:has(> button) .mt-6 {
+    margin-top: 12px;
+  }
+  div.grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3.mt-16:has(> button) img.h-40 {
+    height: 110px;
+  }
+}
+
+/* ---------- 能力区（12 栏网格）：比例微调（大卡更矮、人像更窄、小卡更紧凑） ---------- */
+@media (min-width: 1024px) {
+  div.grid.lg\:grid-cols-12.gap-4.lg\:gap-6:has(> .min-h-\[500px\]) > .min-h-\[500px\] {
+    min-height: 400px;
+  }
+  div.grid.lg\:grid-cols-12.gap-4.lg\:gap-6:has(> .min-h-\[500px\])
+    > .min-h-\[500px\]
+    > .w-\[42\%\] {
+    width: 34%;
+  }
+  div.grid.lg\:grid-cols-12.gap-4.lg\:gap-6:has(> .min-h-\[500px\]) > .lg\:col-span-4 {
+    padding: 28px 30px;
+  }
+}
+
+/* ---------- AI 区尺寸：宽 min(1200px, 100%)（≥1024px）；
+   双列跑马灯后不再限高，区域自然放大 ---------- */
+@media (min-width: 1024px) {
+  #portfolio-works > [data-tweak="ai"] {
+    width: min(1200px, 100%);
+  }
+}
+/* AI 区双列跑马灯行距 */
+#portfolio-works > [data-tweak="ai"] .mq + .mq {
+  margin-top: 16px;
+}
+
+/* ---------- 作者上传按钮：仅作者模式可见（AI 区 + ai/graphic 弹窗头部共用） ---------- */
+.tweak-upload-btn {
+  display: none;
+  font: 12px/1.6 ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.08em;
+  color: #eca8d6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+}
+body.author-mode .tweak-upload-btn {
+  display: inline-block;
+}
+
+/* ---------- 作者模式：单选删除徽标 / 提示条 / 已删隐藏 ---------- */
+.tweak-del-badge {
+  position: fixed;
+  z-index: 99995;
+  display: none;
+  font: 11px/1 ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: rgba(203, 38, 78, 0.88);
+  border: none;
+  border-radius: 999px;
+  padding: 7px 11px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+.tweak-del-badge.tweak-show {
+  display: block;
+}
+.tweak-del-badge.tweak-armed {
+  background: #e11d48;
+}
+.tweak-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%) translateY(8px);
+  z-index: 99996;
+  max-width: 82vw;
+  font: 12px/1.6 ui-monospace, SFMono-Regular, monospace;
+  color: #fff;
+  background: rgba(18, 18, 26, 0.95);
+  border: 1px solid rgba(236, 168, 214, 0.4);
+  border-radius: 999px;
+  padding: 9px 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.tweak-toast.tweak-show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+#portfolio-works figure[data-tweak-del],
+.tweak-panel-body figure[data-tweak-del] {
+  display: none !important;
+}
+
+/* ---------- 减弱动态 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .mq-track {
+    animation: none !important;
+  }
+  .tweak-modal,
+  .tweak-panel {
+    animation: none !important;
+  }
+}
