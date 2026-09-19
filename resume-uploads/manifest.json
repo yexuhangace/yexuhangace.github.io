@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "ver": 1789803237663,
+  "ver": 1789803438163,
   "items": [
     {
       "id": "u1788695713533279",
@@ -34,27 +34,6 @@
       "section": "brand",
       "src": "resume-uploads/brand/u1788861835916705.jpg",
       "cap": "logo.jpg",
-      "kind": "image"
-    },
-    {
-      "id": "u1788861838528802",
-      "section": "graphic",
-      "src": "resume-uploads/graphic/u1788861838528802.jpg",
-      "cap": "小黄人2.jpg",
-      "kind": "image"
-    },
-    {
-      "id": "u1788871160044918",
-      "section": "graphic",
-      "src": "resume-uploads/graphic/u1788871160044918.jpg",
-      "cap": "ai生图作品1.jpg",
-      "kind": "image"
-    },
-    {
-      "id": "u1788871164973734",
-      "section": "graphic",
-      "src": "resume-uploads/graphic/u1788871164973734.jpg",
-      "cap": "ai生图作品2.jpg",
       "kind": "image"
     },
     {
@@ -105,8 +84,8 @@
     "assets/brand/brand_stickers.png": "resume-uploads/replaced/r1788861829668367.png",
     "assets/video/video_daan.mp4": "resume-uploads/replaced/r20260909121439.mp4"
   },
-  "bg": "resume-uploads/hero-bg.mp4",
-  "updated": "2026-09-19T07:34:01.583Z",
+  "bg": "resume-uploads/hero-bg.jpg",
+  "updated": "2026-09-19T07:37:26.787Z",
   "titles": {},
   "hidden": []
 }
