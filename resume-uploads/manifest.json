@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "ver": 1789803438163,
+  "ver": 1790090371744,
   "items": [
     {
       "id": "u1788695713533279",
@@ -77,6 +77,27 @@
       "src": "resume-uploads/product/u1789803238373107.jpg",
       "cap": "微信图片_20251016174318_49_94.jpg",
       "kind": "image"
+    },
+    {
+      "id": "u1790090384042328",
+      "section": "ai",
+      "src": "resume-uploads/ai/u1790090384042328.jpg",
+      "cap": "ComfyUI_00002_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u1790090387566814",
+      "section": "ai",
+      "src": "resume-uploads/ai/u1790090387566814.jpg",
+      "cap": "ComfyUI_00004_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u1790090391413484",
+      "section": "ai",
+      "src": "resume-uploads/ai/u1790090391413484.jpg",
+      "cap": "ComfyUI_00006_.png",
+      "kind": "image"
     }
   ],
   "ovr": {
@@ -85,7 +106,7 @@
     "assets/video/video_daan.mp4": "resume-uploads/replaced/r20260909121439.mp4"
   },
   "bg": "resume-uploads/hero-bg.jpg",
-  "updated": "2026-09-19T07:37:26.787Z",
+  "updated": "2026-09-22T15:19:55.056Z",
   "titles": {},
   "hidden": []
 }
