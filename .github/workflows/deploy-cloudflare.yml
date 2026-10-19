@@ -24,17 +24,16 @@ jobs:
             -d "grant_type=refresh_token&refresh_token=${{ secrets.CF_REFRESH_TOKEN }}&client_id=54d11594-84e4-41aa-b438-e81b8fa78ee7")
           TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
           if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
-            echo "::error::Token refresh failed: $RESPONSE"
+            echo "::error::Cloudflare authorization refresh failed; reauthorize the existing account."
             exit 1
           fi
           echo "::add-mask::$TOKEN"
           echo "cf_token=$TOKEN" >> $GITHUB_OUTPUT
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ steps.refresh.outputs.cf_token }}
           accountId: fa11a228e02aa48b8cbf4ee9a0ae12ef
-          projectName: yexuhang-portfolio
-          directory: .
+          command: pages deploy . --project-name=yexuhang-portfolio --branch=main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

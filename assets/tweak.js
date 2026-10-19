@@ -26,6 +26,10 @@
   var AI_SRC2 = "u1788871164973734";
   var suspended = false;
   var pending = null;
+  function imageSource(im) {
+    return window.YXHPerformance ? window.YXHPerformance.original(im) : (im.currentSrc || im.src);
+  }
+
 
   /* ---------- 迷你灯箱（克隆节点/AI 图没有 React 事件） ---------- */
   var lb = null;
@@ -42,6 +46,7 @@
   function openLb(src, cap) {
     closeLb();
     lb = document.createElement("div");
+    lb.className = "yxh-full-image";
     lb.style.cssText =
       "position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:32px;cursor:zoom-out";
     var im = document.createElement("img");
@@ -68,7 +73,7 @@
         var fc = f.querySelector("figcaption");
         cap = fc ? fc.textContent : "";
       }
-      openLb(im.currentSrc || im.src, cap);
+      openLb(imageSource(im), cap);
     }
   });
 
@@ -113,7 +118,7 @@
         if (f.hasAttribute && f.hasAttribute("data-tweak-del")) return; /* 已标记删除 */
         var im = f.querySelector("img");
         if (!im) return;
-        var key = (im.getAttribute("src") || "").split("?")[0];
+        var key = imageSource(im).split("?")[0];
         if (!key || seen[key]) return;
         seen[key] = 1;
         uniq.push(f);
@@ -183,7 +188,8 @@
         if (im) {
           var cf = document.createElement("figure");
           var cim = document.createElement("img");
-          cim.src = im.currentSrc || im.src;
+          if (window.YXHPerformance) cim.setAttribute("data-perf-src", imageSource(im));
+          else cim.src = imageSource(im);
           cim.alt = title;
           var cc = document.createElement("figcaption");
           cc.textContent = title;
@@ -275,7 +281,7 @@
     var body = document.createElement("div");
     body.className = "tweak-panel-body";
     var headings = {};
-    var eagerLeft = 12; /* 首屏图 eager 加载，确保骨架屏立即切换；其余懒加载 */
+    var eagerLeft = 4; /* 仅弹窗可视范围优先，其余按需加载 */
     groups.forEach(function (g) {
       var sec = document.createElement("section");
       sec.className = "tweak-group";
@@ -405,6 +411,7 @@
     } catch (_) {}
   }
   function stripSrc(src) {
+    if (window.YXHPerformance) return window.YXHPerformance.canonical(src);
     return ((src || "").split("?")[0] || "").replace(/^https?:\/\/[^/]+\//, "");
   }
   function showToast(msg) {
@@ -432,8 +439,9 @@
       function (im) {
         var f = im.closest("figure");
         if (!f) return;
-        if (set[stripSrc(im.currentSrc || im.src)]) f.setAttribute("data-tweak-del", "1");
-        else if (f.getAttribute("data-tweak-del")) f.removeAttribute("data-tweak-del");
+        if (set[stripSrc(imageSource(im))]) {
+          if (!f.hasAttribute("data-tweak-del")) f.setAttribute("data-tweak-del", "1");
+        } else if (f.getAttribute("data-tweak-del")) f.removeAttribute("data-tweak-del");
       }
     );
   }
@@ -511,7 +519,7 @@
       hideDelBadge();
       return;
     }
-    var s = stripSrc(im.currentSrc || im.src);
+    var s = stripSrc(imageSource(im));
     if (!s || readJsonArr(DEL_SRC_KEY).indexOf(s) > -1) {
       hideDelBadge();
       return;
@@ -544,13 +552,19 @@
     var i;
     for (i = 0; i < half; i++) setW += tiles[i].getBoundingClientRect().width + 8;
     var cw = row.clientWidth;
-    if (setW > 0 && cw > 0 && setW < cw) {
+    if (setW > 0 && cw > 0 && setW < cw && !row.classList.contains("mq-static")) {
       row.classList.add("mq-static");
-    } else if (setW >= cw) {
+    } else if (setW >= cw && row.classList.contains("mq-static")) {
       row.classList.remove("mq-static");
     }
     Array.prototype.forEach.call(track.querySelectorAll("img"), function (im) {
-      if (!im.complete) im.addEventListener("load", fitAllMq, { once: true });
+      if (!im.complete && !im._tweakFitPending) {
+        im._tweakFitPending = true;
+        im.addEventListener("load", function () {
+          im._tweakFitPending = false;
+          fitAllMq();
+        }, { once: true });
+      }
     });
   }
   function fitAllMq() {
@@ -564,10 +578,27 @@
 
   /* ---------- 工具 ---------- */
   function cloneTile(fig, tileClass) {
-    var c = fig.cloneNode(true);
+    var c;
+    if (window.YXHPerformance) {
+      // Inert template cloning prevents the browser fetching hidden originals on cloneNode().
+      var template = document.createElement("template");
+      template.innerHTML = fig.outerHTML;
+      c = template.content.firstElementChild;
+      Array.prototype.forEach.call(c.querySelectorAll("img"), function (im) {
+        var src = imageSource(im);
+        im.removeAttribute("src");
+        im.removeAttribute("srcset");
+        im.removeAttribute("sizes");
+        im.setAttribute("data-perf-src", src);
+      });
+    } else c = fig.cloneNode(true);
     c.classList.add("mq-clone");
     if (tileClass) c.classList.add(tileClass);
     if (c.hasAttribute("style")) c.removeAttribute("style");
+    if (window.YXHPerformance) {
+      var im = c.querySelector("img");
+      if (im) window.YXHPerformance.prepare(im);
+    }
     return c;
   }
 
@@ -652,7 +683,7 @@
       (cls ? " " + cls : "") +
       ' group relative overflow-hidden border border-foreground/10" data-cap="' +
       cap +
-      '"><img src="' +
+      '"><img data-perf-src="' +
       src +
       '" alt="' +
       cap +
@@ -678,14 +709,14 @@
       });
     return manifestFetched;
   }
-  /* AI 区双列跑马灯：奇偶分半双向滚动；仅前 6 张 eager（减少首屏卡顿），其余懒加载 */
+  /* AI 区双列跑马灯：奇偶分半双向滚动；图片接近可视区才加载，不抢占首页带宽 */
   function appendAiRows(sec, figs) {
     Array.prototype.forEach.call(sec.querySelectorAll(":scope > .mq"), function (r) {
       r.remove();
     });
     var btns = sec.querySelector(".tweak-ai-btns");
     var cut = Math.ceil(figs.length / 2);
-    var eager = 6;
+    var eager = 0;
     [
       buildRow(figs.slice(0, cut), "l", "a-tile"),
       buildRow(figs.slice(cut), "r", "a-tile")
@@ -711,7 +742,7 @@
       if (!srcBox) return;
       var have = {};
       Array.prototype.forEach.call(srcBox.querySelectorAll("img"), function (im) {
-        have[stripSrc(im.getAttribute("src") || "")] = 1;
+        have[stripSrc(imageSource(im))] = 1;
       });
       var added = 0;
       news.forEach(function (it) {
@@ -1091,7 +1122,7 @@
   }
 
   /* ---------- 守护：React 重渲染后自动恢复 ----------
-     首次应用延迟到 load 之后（等水合完成），避免触发水合失配 */
+     首次应用等 React 水合绑定完成，不再等待所有资源的 load 事件 */
   function boot() {
     /* 作者模式切换：退出时收起删除徽标 */
     new MutationObserver(function () {
@@ -1109,11 +1140,11 @@
     apply();
   }
 
-  if (document.readyState === "complete") {
+  if (window.YXHPerformance) {
+    window.YXHPerformance.whenHydrated(function () { setTimeout(boot, 0); });
+  } else if (document.readyState === "complete") {
     setTimeout(boot, 300);
   } else {
-    window.addEventListener("load", function () {
-      setTimeout(boot, 300);
-    });
+    window.addEventListener("load", function () { setTimeout(boot, 300); });
   }
 })();
