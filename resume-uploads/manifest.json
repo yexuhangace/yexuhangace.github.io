@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "ver": 1790090371744,
+  "ver": 1792669740894,
   "items": [
     {
       "id": "u1788695713533279",
@@ -98,6 +98,69 @@
       "src": "resume-uploads/ai/u1790090391413484.jpg",
       "cap": "ComfyUI_00006_.png",
       "kind": "image"
+    },
+    {
+      "id": "u1792669749087289",
+      "section": "ai",
+      "src": "resume-uploads/ai/u1792669749087289.jpg",
+      "cap": "ComfyUI_00016_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u1792669751882483",
+      "section": "ai",
+      "src": "resume-uploads/ai/u1792669751882483.jpg",
+      "cap": "ComfyUI_00018_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u1792669754652992",
+      "section": "ai",
+      "src": "resume-uploads/ai/u1792669754652992.jpg",
+      "cap": "ComfyUI_00020_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u179266975735570",
+      "section": "ai",
+      "src": "resume-uploads/ai/u179266975735570.jpg",
+      "cap": "ComfyUI_00157_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u179266975991073",
+      "section": "ai",
+      "src": "resume-uploads/ai/u179266975991073.jpg",
+      "cap": "ComfyUI_00174_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u179266976252019",
+      "section": "ai",
+      "src": "resume-uploads/ai/u179266976252019.jpg",
+      "cap": "ComfyUI_00176_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u1792669765218494",
+      "section": "ai",
+      "src": "resume-uploads/ai/u1792669765218494.jpg",
+      "cap": "ComfyUI_00181_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u1792669767847955",
+      "section": "ai",
+      "src": "resume-uploads/ai/u1792669767847955.jpg",
+      "cap": "ComfyUI_00189_.png",
+      "kind": "image"
+    },
+    {
+      "id": "u17926697706780",
+      "section": "ai",
+      "src": "resume-uploads/ai/u17926697706780.jpg",
+      "cap": "ComfyUI_00196_.png",
+      "kind": "image"
     }
   ],
   "ovr": {
@@ -106,7 +169,7 @@
     "assets/video/video_daan.mp4": "resume-uploads/replaced/r20260909121439.mp4"
   },
   "bg": "resume-uploads/hero-bg.jpg",
-  "updated": "2026-09-22T15:19:55.056Z",
+  "updated": "2026-10-22T11:49:33.318Z",
   "titles": {},
   "hidden": []
 }
