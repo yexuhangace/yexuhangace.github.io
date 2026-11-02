@@ -32,25 +32,33 @@
 
 
   /* ---------- 迷你灯箱（克隆节点/AI 图没有 React 事件） ---------- */
-  var lb = null;
+  var lb = null, lbReturnFocus = null;
   function onKey(e) {
     if (e.key === "Escape") closeLb();
+    if (e.key === "Tab" && lb) { e.preventDefault(); lb.querySelector("button").focus(); }
   }
   function closeLb() {
     document.removeEventListener("keydown", onKey);
     if (lb) {
       lb.remove();
       lb = null;
+      if (lbReturnFocus && lbReturnFocus.isConnected) lbReturnFocus.focus({ preventScroll: true });
+      lbReturnFocus = null;
     }
   }
   function openLb(src, cap) {
     closeLb();
+    lbReturnFocus = document.activeElement;
     lb = document.createElement("div");
     lb.className = "yxh-full-image";
+    lb.setAttribute("role", "dialog");
+    lb.setAttribute("aria-modal", "true");
+    lb.setAttribute("aria-label", cap || "作品大图");
     lb.style.cssText =
       "position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:32px;cursor:zoom-out";
     var im = document.createElement("img");
     im.src = src;
+    im.alt = cap || "作品大图";
     im.style.cssText =
       "max-width:92vw;max-height:82vh;object-fit:contain;border:1px solid rgba(255,255,255,.15)";
     var cp = document.createElement("div");
@@ -59,9 +67,18 @@
       "font:12px/1.6 ui-monospace,SFMono-Regular,monospace;color:rgba(255,255,255,.65);letter-spacing:.05em";
     lb.appendChild(im);
     lb.appendChild(cp);
+    var close = document.createElement("button");
+    close.type = "button";
+    close.className = "yxh-image-close";
+    close.setAttribute("aria-label", "关闭作品大图");
+    close.textContent = "×";
+    close.style.cssText = "position:absolute;top:18px;right:18px;width:48px;height:48px;display:grid;place-items:center;background:#f3f0e7;color:#151515;border:1px solid #fff;border-radius:50%;font:32px/1 Arial,sans-serif;cursor:pointer;z-index:1";
+    close.addEventListener("click", function (e) { e.stopPropagation(); closeLb(); });
+    lb.appendChild(close);
     lb.addEventListener("click", closeLb);
     document.addEventListener("keydown", onKey);
     document.body.appendChild(lb);
+    close.focus();
   }
   document.addEventListener("click", function (e) {
     var f = e.target.closest && e.target.closest(".mq-clone, .ai-fig");
@@ -148,8 +165,9 @@
       /* AI 区跑马灯化：源图统一藏于 .tweak-ai-src */
       addGroup("AI 平面作品", s.querySelectorAll(".tweak-ai-src figure"));
     });
+    var posterFigs = [];
     (secs.posters || []).forEach(function (s) {
-      addGroup("成套海报", s.querySelectorAll(".grid > figure"));
+      posterFigs = posterFigs.concat(Array.prototype.slice.call(s.querySelectorAll("figure")));
     });
     var brandFigs = { core: [], online: [] };
     (secs.brand || []).forEach(function (s) {
@@ -173,9 +191,9 @@
       if (!cols) return;
       addGroup(
         "其他平面作品",
-        Array.prototype.filter.call(cols.querySelectorAll("div > figure"), function (f) {
+        posterFigs.concat(Array.prototype.filter.call(cols.querySelectorAll("div > figure"), function (f) {
           return !isAiFig(f);
-        })
+        }))
       );
     });
     (secs.photo || []).forEach(function (s) {
@@ -251,6 +269,7 @@
 
     var ov = document.createElement("div");
     ov.className = "tweak-modal";
+    ov.setAttribute("data-zone", zone || "all");
     ov.style.cssText =
       "position:fixed;inset:0;z-index:99990;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;padding:20px";
     var panel = document.createElement("div");
@@ -967,7 +986,7 @@
         if (sec.getAttribute("data-tweak") !== k) sec.setAttribute("data-tweak", k);
         var o = String(ORDER[k]);
         if (sec.style.order !== o) sec.style.order = o;
-        if (k === "huangpu" && sec.style.display !== "none") sec.style.display = "none";
+        if ((k === "huangpu" || k === "posters") && sec.style.display !== "none") sec.style.display = "none";
 
         if (!secs[k]) secs[k] = { header: null, content: null };
         var slot = h3 ? "header" : "content";
@@ -1060,6 +1079,9 @@
           var figs = Array.prototype.filter.call(cols.querySelectorAll("div > figure"), function (f) {
             return !isAiFig(f);
           });
+          if (secs.posters && secs.posters.content) {
+            figs = Array.prototype.slice.call(secs.posters.content.querySelectorAll("figure")).concat(figs);
+          }
           var gn = String(figs.length);
           var gbox = document.getElementById("graphic-mq");
           if (figs.length && (!gbox || gbox.getAttribute("data-n") !== gn)) {

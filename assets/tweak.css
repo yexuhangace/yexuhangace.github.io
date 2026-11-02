@@ -72,7 +72,8 @@
    aspect-ratio:auto 抵消原生 aspect 类，消除图块黑边 */
 #portfolio-works .mq-track > figure.g-tile {
   width: auto !important;
-  height: 280px;
+  min-height: 0 !important;
+  height: 280px !important;
   aspect-ratio: auto !important;
 }
 #portfolio-works .mq-track > figure.g-tile img {
@@ -159,9 +160,30 @@
   transform: none !important;
   padding: 6px 0 0 !important;
 }
+.tweak-modal[data-zone="graphic"] .tweak-modal-grid {
+  display: grid;
+  columns: auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  grid-auto-rows: 1fr;
+}
+.tweak-modal[data-zone="graphic"] .tweak-modal-grid figure {
+  height: auto !important;
+  margin: 0 !important;
+}
+.tweak-modal[data-zone="graphic"] .tweak-modal-grid figure img {
+  height: 280px !important;
+  object-fit: contain !important;
+}
 @media (max-width: 768px) {
   .tweak-modal-grid {
     columns: 1;
+  }
+  .tweak-modal[data-zone="graphic"] .tweak-modal-grid {
+    grid-template-columns: 1fr;
+  }
+  .tweak-modal[data-zone="graphic"] .tweak-modal-grid figure img {
+    height: 240px !important;
   }
 }
 
