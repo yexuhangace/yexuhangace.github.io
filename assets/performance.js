@@ -20,6 +20,16 @@
     return reverse[key] || raw;
   }
   function canonical(src) { var key = pathOf(src); return reverse[key] || key || src; }
+  var videoPreviews = {
+    "resume-uploads/replaced/r20260909121439.mp4": "assets/stream/answer-web.mp4",
+    "assets/video/video_xiaochaihu.mp4": "assets/stream/xiaochaihu-web.mp4",
+    "assets/video/video_yili.mp4": "assets/stream/yili-web.mp4"
+  };
+  function prepareVideo(video) {
+    if (!video.closest("#portfolio-works") || !video.paused || document.body.classList.contains("author-mode")) return;
+    var preview = videoPreviews[pathOf(video.getAttribute("src") || "")];
+    if (preview) video.setAttribute("src", preview);
+  }
   var io = "IntersectionObserver" in window ? new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (!entry.isIntersecting) return;
@@ -129,12 +139,14 @@
     function scan() {
       queued = false;
       document.querySelectorAll("main img, .tweak-modal img").forEach(prepare);
+      document.querySelectorAll("#portfolio-works video").forEach(prepareVideo);
       updateHero();
     }
     function queue() { if (!queued) { queued = true; requestAnimationFrame(scan); } }
     new MutationObserver(function (mutations) {
       mutations.forEach(function (m) {
         if (m.type === "attributes" && m.target.tagName === "IMG") prepare(m.target);
+        if (m.type === "attributes" && m.target.tagName === "VIDEO" && m.attributeName === "src") prepareVideo(m.target);
         if (m.type === "childList") Array.prototype.forEach.call(m.addedNodes, function (node) {
           if (node.nodeType !== 1) return;
           if (node.tagName === "IMG") prepare(node);
