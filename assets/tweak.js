@@ -581,13 +581,19 @@
         im._tweakFitPending = true;
         im.addEventListener("load", function () {
           im._tweakFitPending = false;
-          fitAllMq();
+          scheduleFit();
         }, { once: true });
       }
     });
   }
   function fitAllMq() {
     Array.prototype.forEach.call(document.querySelectorAll(".mq"), fitRow);
+  }
+  var fitPending = false;
+  function scheduleFit() {
+    if (fitPending) return;
+    fitPending = true;
+    requestAnimationFrame(function () { fitPending = false; fitAllMq(); });
   }
   var resizeTimer = 0;
   window.addEventListener("resize", function () {
