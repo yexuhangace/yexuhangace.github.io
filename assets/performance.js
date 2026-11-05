@@ -42,12 +42,9 @@
       }
       return;
     }
-    var inGallery = !!im.closest(".tweak-panel-body");
-    var variants = inGallery ? rec.variants.filter(function (v) { return v.width <= 640; }) : rec.variants;
-    if (!variants.length) variants = rec.variants.slice(0, 1);
-    var srcset = variants.map(function (v) { return "https://yexuhang-portfolio.pages.dev/" + v.src + " " + v.width + "w"; }).join(", ");
+    var srcset = rec.variants.map(function (v) { return v.src + " " + v.width + "w"; }).join(", ");
     if (im.getAttribute("srcset") !== srcset) im.setAttribute("srcset", srcset);
-    var sizes = im.closest("#about") ? "100vw" : inGallery ? "(max-width: 768px) 90vw, 360px" : "(max-width: 768px) 92vw, (max-width: 1024px) 46vw, 420px";
+    var sizes = im.closest("#about") ? "100vw" : "(max-width: 768px) 92vw, (max-width: 1024px) 46vw, 420px";
     if (im.getAttribute("sizes") !== sizes) im.setAttribute("sizes", sizes);
     if (!im.hasAttribute("width")) im.setAttribute("width", rec.width);
     if (!im.hasAttribute("height")) im.setAttribute("height", rec.height);
