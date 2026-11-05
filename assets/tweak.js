@@ -1158,7 +1158,7 @@
       }, 150);
     });
     var rootEl = document.getElementById("portfolio-works");
-    if (rootEl) mo.observe(rootEl, { childList: true, subtree: true, attributes: true });
+    if (rootEl) mo.observe(rootEl, { childList: true, subtree: true, attributes: true, attributeFilter: ["src", "data-perf-src", "data-tweak-del"] });
     apply();
   }
 

@@ -18,7 +18,7 @@
       var f = document.createElement('figure');
       f.className = 'ai-fig';
       f.setAttribute('data-trigger-work', name);
-      f.innerHTML = '<img src="assets/brand-extension/' + name + '.webp" alt="扳机艺术线上概念延展 ' + (i + 1) + '" loading="lazy" decoding="async"><figcaption>线上 · AI 辅助概念延展 ' + (i + 1) + '</figcaption>';
+      f.innerHTML = '<img data-perf-src="assets/brand-extension/' + name + '.webp" alt="扳机艺术线上概念延展 ' + (i + 1) + '" loading="lazy" decoding="async"><figcaption>线上 · AI 辅助概念延展 ' + (i + 1) + '</figcaption>';
       online.appendChild(f);
     });
     works.forEach(function (work, i) {
@@ -26,7 +26,7 @@
       var figure = document.createElement("figure");
       figure.className = "ai-fig tr-cover col-span-2" + (i === 0 ? " row-span-2" : "");
       figure.setAttribute("data-trigger-work", work[0]);
-      figure.innerHTML = '<button type="button" aria-label="查看扳机艺术' + work[1] + '完整图"><img src="assets/brand-extension/' + work[0] + '.webp" alt="扳机艺术 · ' + work[1] + ' · AI 辅助概念延展" width="' + work[3] + '" height="' + work[4] + '" loading="lazy" decoding="async"><span class="tr-open" aria-hidden="true">查看完整图 ↗</span></button><figcaption>' + work[1] + '<span>AI 辅助概念延展 · ' + work[2] + '</span></figcaption>';
+      figure.innerHTML = '<button type="button" aria-label="查看扳机艺术' + work[1] + '完整图"><img data-perf-src="assets/brand-extension/' + work[0] + '.webp" alt="扳机艺术 · ' + work[1] + ' · AI 辅助概念延展" width="' + work[3] + '" height="' + work[4] + '" loading="lazy" decoding="async"><span class="tr-open" aria-hidden="true">查看完整图 ↗</span></button><figcaption>' + work[1] + '<span>AI 辅助概念延展 · ' + work[2] + '</span></figcaption>';
       grid.appendChild(figure);
     });
   }
