@@ -33,6 +33,14 @@
   }
   function boot() {
     apply();
+    document.documentElement.classList.remove("portfolio-preparing");
+    window.dispatchEvent(new Event("resize"));
+    if (location.hash === "#lunan-project" || location.hash === "#ln-shorts") {
+      requestAnimationFrame(function () {
+        var target = document.getElementById(location.hash.slice(1));
+        if (target) target.scrollIntoView();
+      });
+    }
     var pending = false;
     var observer = new MutationObserver(function () {
       if (pending) return;
