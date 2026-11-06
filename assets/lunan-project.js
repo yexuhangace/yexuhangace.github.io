@@ -23,7 +23,7 @@
     var titles = ["空调房<br>里的日常", "风起<br>的时候", "夜归<br>之后", "忙完<br>这一刻"];
     var shorts = lengths.map(function (length, i) {
       var n = String(i + 1).padStart(2, "0");
-      return '<article class="ln-short">' + player('assets/lunan/short-' + n + '.mp4?v=20261106', '鲁南制药竖屏短片' + n, true, titles[i], n, length) +
+      return '<article class="ln-short">' + player('assets/lunan/short-' + n + '.mp4?v=20261106-fast', '鲁南制药竖屏短片' + n, true, titles[i], n, length) +
         '<div class="ln-short-caption"><div><span class="ln-index">' + n + '</span><h5>竖屏短片 ' + n + '</h5></div><span class="ln-time">' + length + '</span></div></article>';
     }).join("");
     section.innerHTML = '<header class="ln-header"><div><p class="ln-eyebrow">LUNAN PHARMA / BRAND FILM & SHORTS</p><h4 id="ln-heading">鲁南制药<span>品牌影像与短视频</span></h4></div><p class="ln-count">01 主片 <span aria-hidden="true">/</span> 04 短片</p></header>' +
