@@ -20,16 +20,16 @@
 #skills>div>div:nth-child(2)>div:last-child h3{font-size:16px!important;margin:4px 0!important}
 #skills>div>div:nth-child(2)>div:last-child p{margin:0!important;font-size:11px!important}
 #portfolio>div:first-child{padding-top:56px!important}
-#portfolio>div:nth-child(2)>.grid:first-child{margin-top:24px!important;gap:12px!important;grid-auto-rows:1fr}
-#portfolio>div:nth-child(2)>.grid:first-child>*{min-height:0!important;padding:20px!important;transform:none!important;opacity:1!important;transition:border-color .18s!important}
-#portfolio>div:nth-child(2)>.grid:first-child>*>div:has(img){display:none!important}
-#portfolio>div:nth-child(2)>.grid:first-child>*>div:first-child{margin-bottom:12px!important}
-#portfolio>div:nth-child(2)>.grid:first-child h3{font-size:16px!important;line-height:1.45!important;margin-bottom:7px!important}
-#portfolio>div:nth-child(2)>.grid:first-child p{font-size:12px!important;line-height:1.7!important}
-#portfolio>div:nth-child(2)>.grid:first-child p:first-of-type{font-size:10px!important;margin-bottom:8px!important}
-#portfolio>div:nth-child(2)>.grid:first-child>*>div:nth-last-child(2){margin-top:14px!important;gap:6px!important}
-#portfolio>div:nth-child(2)>.grid:first-child>*>div:nth-last-child(2)>span{font-size:9px!important}
-#portfolio>div:nth-child(2)>.grid:first-child .flex-1>span{margin-top:10px!important;font-size:10px!important}
+
+
+
+
+
+
+
+
+
+
 #portfolio>div:nth-child(2)>div:last-child{padding-top:24px!important;margin-top:48px!important;gap:20px!important}
 #portfolio-works>.mt-28{margin-top:64px!important}
 #portfolio-works>.mb-12{margin-bottom:24px!important}
@@ -37,5 +37,31 @@
 #portfolio-works #ln-heading{font-size:clamp(28px,3vw,38px)!important}
 @media(max-width:1050px){#skills>div>div:nth-child(2){grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(min-width:641px) and (max-width:1050px){#skills>div>div:nth-child(2)>div:nth-child(-n+4){min-height:240px!important}}
-@media(max-width:640px){#skills>div>div:nth-child(2)>div:nth-child(-n+4){min-height:260px!important}}
-@media(max-width:640px){#skills{padding-block:36px!important}#skills>div>div:first-child .grid{display:block}#skills>div>div:first-child p{margin-top:12px!important;font-size:12px!important}#skills>div>div:nth-child(2){gap:10px!important}#skills>div>div:nth-child(2)>div{padding:15px!important}#skills>div>div:nth-child(2)>div:first-child>div:first-child{padding:15px!important}#skills h3{font-size:16px!important;margin-top:5px!important}#skills>div>div:nth-child(2) p{font-size:11px!important;line-height:1.7!important;margin-bottom:10px!important}#skills>div>div:nth-child(2) .flex.flex-wrap>span{font-size:9px!important;padding:3px 5px!important}#skills>div>div:nth-child(2)>div:last-child{padding:16px!important}#skills>div>div:nth-child(2)>div:last-child>div{gap:12px!important;align-items:start}#portfolio>div:first-child{padding-top:36px!important}#portfolio>div:nth-child(2)>.grid:first-child>*{padding:17px!important}#portfolio-works>.mt-28{margin-top:44px!important}#portfolio>div:nth-child(2)>.grid:first-child{margin-top:18px!important;gap:10px!important}}
+/* Mobile keeps the skill tags visible; supporting copy is optional. */
+.skills-detail-toggle{display:none}
+@media(max-width:640px){
+ #skills{padding-block:24px!important}
+ #skills>div>div:first-child{margin-bottom:16px!important}
+ #skills>div>div:first-child .grid{display:block}
+ #skills h2{font-size:26px!important}
+ #skills>div>div:first-child span{margin-bottom:5px!important}
+ #skills>div>div:first-child p{display:none!important}
+ #skills>div>div:nth-child(2){gap:8px!important}
+ #skills>div>div:nth-child(2)>div{padding:12px!important;height:auto!important;min-height:0!important}
+ #skills>div>div:nth-child(2)>div:first-child>div:first-child{padding:12px!important}
+ #skills>div>div:nth-child(2)>div:nth-child(-n+4)>span,
+ #skills>div>div:nth-child(2)>div:first-child .text-sm:not(.border){display:none!important}
+ #skills h3{font-size:14px!important;line-height:1.35!important;margin:0 0 9px!important}
+ #skills>div>div:nth-child(2)>div:nth-child(-n+4) p{display:none!important}
+ #skills>div>div:nth-child(2) .flex.flex-wrap{gap:4px!important}
+ #skills>div>div:nth-child(2) .flex.flex-wrap>span{font-size:11px!important;line-height:1.65!important;padding:0!important;border:0!important}
+ #skills>div>div:nth-child(2)>div:last-child{padding:12px!important}
+ #skills>div>div:nth-child(2)>div:last-child>div{gap:0!important}
+ #skills>div>div:nth-child(2)>div:last-child>div>div:last-child{display:none!important}
+ #skills>div>div:nth-child(2)>div:last-child p{font-size:11px!important;line-height:1.5!important}
+ #skills.skills-expanded>div>div:nth-child(2)>div:nth-child(-n+4) p{display:block!important;font-size:12px!important;line-height:1.6!important;margin-bottom:10px!important}
+ #skills.skills-expanded>div>div:nth-child(2)>div:last-child>div>div:last-child{display:flex!important;margin-top:10px}
+ .skills-detail-toggle{display:block;min-height:44px;margin:6px 0 -6px;padding:8px 0;border:0;background:none;color:inherit;opacity:.7;font-size:12px;line-height:1.5;font-family:inherit;text-align:left;cursor:pointer}
+ #portfolio>div:first-child{padding-top:36px!important}
+ #portfolio-works>.mt-28{margin-top:44px!important}
+}

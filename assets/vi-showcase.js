@@ -4,8 +4,8 @@
     var root=document.getElementById('portfolio-works');if(!root)return;
     var brand=root.querySelector('[data-tweak="brand"].grid');
     if(brand&&!document.getElementById('trigger-vi-showcase')){
-      var card=document.createElement('a');card.id='trigger-vi-showcase';card.href='trigger-vi.html';card.className='vi-showcase tw-own';card.style.order='2';
-      card.innerHTML='<img src="assets/trigger-vi/cover.webp" width="1100" height="588" loading="lazy" decoding="async" alt="扳机艺术黏土风品牌主视觉"><div><small>TRIGGER / VISUAL IDENTITY · 36 PAGES</small><h4>扳机艺术<br>黏土视觉识别系统</h4><p>从角色与主视觉，到书册、印刷物料和品牌应用。</p><strong>浏览完整手册 ↗</strong></div>';
+      var card=document.createElement('section');card.id='trigger-vi-showcase';card.className='vi-showcase tw-own';card.style.order='2';
+      card.innerHTML='<a class="vi-cover" href="trigger-vi.html" aria-label="打开扳机艺术完整手册"><img src="assets/trigger-vi/cover-robot.webp" width="1720" height="920" loading="lazy" decoding="async" alt="扳机艺术品牌主视觉"></a><div class="vi-info"><div><small>TRIGGER / VISUAL IDENTITY · 36 PAGES</small><h4>扳机艺术 · 品牌视觉识别系统</h4><p>从角色与主视觉，到书册、印刷物料和品牌应用。</p></div><a class="vi-button" href="trigger-vi.html">浏览完整手册 <span aria-hidden="true">↗</span></a></div>';
       brand.insertAdjacentElement('beforebegin',card);
     }
     root.querySelectorAll('video').forEach(function(v){
