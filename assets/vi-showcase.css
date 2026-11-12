@@ -27,3 +27,20 @@
 .flat-vi-pager button{min-width:44px;min-height:44px;padding:8px;border:1px solid #ffffff40;background:transparent;color:#fff;cursor:pointer;font-size:18px}
 .flat-vi-pager button:hover{background:#e34134}.flat-vi-pager button:focus-visible{outline:2px solid #fff;outline-offset:3px}
 @media(max-width:500px){.flat-vi-pager{gap:6px}.flat-vi-pager>span{font-size:11px!important}.flat-vi-pager>div{gap:8px}}
+
+.poster-studies{margin:72px 0 8px;padding-top:40px;border-top:1px solid #ffffff26;scroll-margin-top:90px}
+.poster-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}
+.poster-heading small{font:11px/1.5 monospace;letter-spacing:.12em;color:#eca8d6}
+.poster-heading h3{font-size:clamp(30px,4vw,48px);font-weight:500;letter-spacing:-.04em;line-height:1.2;margin:12px 0}
+.poster-heading p{font-size:13px;line-height:1.7;color:#aaa;margin:0}
+.poster-index{font:clamp(24px,4vw,48px)/1 monospace;color:#ffffff30;white-space:nowrap}
+.poster-categories{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #ffffff26;color:#ccc;font-size:13px}
+.poster-categories small{font:10px/1 monospace;margin-left:8px;color:#888}
+.poster-open:focus-visible{outline:2px solid #eca8d6;outline-offset:4px}
+.poster-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px 16px}
+#portfolio-works .poster-grid>figure{min-width:0;margin:0;aspect-ratio:auto!important;overflow:visible!important;background:transparent;border:0}
+.poster-open{display:block;width:100%;aspect-ratio:2/3;padding:0;border:0;background:#f7f5ef;cursor:zoom-in;overflow:hidden}
+#portfolio-works .poster-open>img{display:block;width:100%!important;height:100%!important;max-height:none!important;object-fit:contain!important;transform:none!important;aspect-ratio:auto!important}
+#portfolio-works .poster-grid figcaption{position:static!important;display:flex;flex-direction:column;gap:3px;padding:10px 0 0!important;opacity:1!important;transform:none!important;font-size:12px;line-height:1.5;color:#ddd}
+.poster-grid figcaption>small{font-size:10px;color:#888}
+@media(max-width:640px){.poster-studies{margin-top:44px;padding-top:20px}.poster-heading{gap:12px;margin-bottom:16px}.poster-index{font-size:22px}.poster-heading p{font-size:12px}.poster-categories{gap:12px;font-size:11px;margin-bottom:12px;padding-bottom:14px}.poster-categories small{margin-left:3px}.poster-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 9px}#portfolio-works .poster-grid figcaption{font-size:10px;gap:2px;padding-top:7px!important}.poster-grid figcaption>small{display:none}}

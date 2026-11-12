@@ -90,7 +90,7 @@
         var fc = f.querySelector("figcaption");
         cap = fc ? fc.textContent : "";
       }
-      openLb(imageSource(im), cap);
+      openLb(f.getAttribute("data-full") || imageSource(im), cap);
     }
   });
 
